@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shared.apps.SharedConfig',
     'products.apps.ProductsConfig',
-    'platforms.apps.PlatformsConfig',
     'users.apps.UsersConfig',
 ]
 
