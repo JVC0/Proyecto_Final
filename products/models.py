@@ -15,15 +15,15 @@ class Product(models.Model):
         PRESERVES = 'PR', 'Preserves'
         BAKED_GOODS = 'BG', 'Baked Goods'
     name= models.CharField(max_length=100)
+    slug=models.SlugField(_(""))
     stock= models.IntegerField()
     category=models.CharField(max_length=2, choices=Category.choices)
     description=models.TextField()
     price=models.DecimalField(max_digits=6,decimal_places=2)
-    image=models.ImageField(upload_to='Food',blank=True,null=True)
+    image=models.ImageField(upload_to='food',default='food/default.jpg',blank=True)
     
     def __str__(self):
         return self.name
-    
     class Meta:
         ordering = ["name"]
 

@@ -11,7 +11,7 @@ pip-cmd := "pip"  # Default to pip for Windows
 # ==============================================================================
 
 # Launch development server
-runserver: kill-runservers
+runserver: 
     python manage.py runserver
 
 # Launch Django interactive shell
@@ -41,13 +41,14 @@ startapp app:
     (Get-Content ./main/settings.py) -replace '(INSTALLED_APPS *= *\[)(.*?)(\])', "`$1`$2    '$APP_CONFIG',`n`$3" | Set-Content ./main/settings.py
     Write-Output "✔ {{ app }} installed & added to settings.INSTALLED_APPS"
 
-
-
+create-su username="admin" password="admin" email="admin@example.com":
+    python manage.py shell -c "from django.contrib.auth.models import User; user, _ = User.objects.get_or_create(username='{{ username }}'); user.email = '{{ email }}'; user.set_password('{{ password }}'); user.is_superuser = True; user.is_staff = True; user.save()"
 # ==============================================================================
 # MISC RECIPES
 # ==============================================================================
-
-# Kill all Django runserver processes
-[private]
-kill-runservers:
-    powershell -Command "Get-Process python* | Where-Object { $_.ProcessName -eq 'python' -and $_.CommandLine -like '*manage.py runserver*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+reset-db: && create-su
+    Get-ChildItem -Path . -Recurse -Filter *.py -File | Where-Object { $_.FullName -like "*\migrations\*" -and $_.FullName -notlike "*\.venv\*" -and $_.Name -ne "__init__.py" } | Remove-Item -Force
+    Get-ChildItem -Path . -Recurse -Filter *.pyc -File | Where-Object { $_.FullName -like "*\migrations\*" -and $_.FullName -notlike "*\.venv\*" } | Remove-Item -Force
+    Remove-Item -Path db.sqlite3 -ErrorAction SilentlyContinue
+    python manage.py makemigrations
+    python manage.py migrate
