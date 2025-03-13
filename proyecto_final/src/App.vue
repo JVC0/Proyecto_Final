@@ -15,7 +15,13 @@
           <router-link to="/Contact" class="nav-link">Contact</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/Contact" class="nav-link">Contact</router-link>
+          <router-link to="/product-group" class="nav-link">Product Group</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/log-in" class="nav-link">Log in</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/Cart" class="nav-link">Cart</router-link>
         </li>
       </ul>
     </div>
@@ -25,6 +31,6 @@
 </template>
 
 <style>
-
+@import '../node_modules/bootstrap/';
 
 </style>

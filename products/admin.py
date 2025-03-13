@@ -1,3 +1,12 @@
 from django.contrib import admin
-
-# Register your models here.
+from .models import Product
+@admin.register(Product)
+class GameAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'stock',
+        'category',
+        'description',
+        'price'
+    )
+    

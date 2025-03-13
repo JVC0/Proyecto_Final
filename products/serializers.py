@@ -15,6 +15,7 @@ class ProductSerializer(BaseSerializer):
             'stock': instance.stock,
             'description': instance.description,
             'price':float(instance.price),     
+            'image':self.build_url(instance.image.url),
         }
 
 
