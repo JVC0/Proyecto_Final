@@ -1,7 +1,5 @@
 from django.db import models
-from PIL import Image
-from django.core.files import File
-from io import BytesIO
+
 class Product(models.Model):
     class Category(models.TextChoices):
         FRUITS = 'FR', 'Fruits'
@@ -15,7 +13,7 @@ class Product(models.Model):
         PRESERVES = 'PR', 'Preserves'
         BAKED_GOODS = 'BG', 'Baked Goods'
     name= models.CharField(max_length=100)
-    slug=models.SlugField(_(""))
+    slug=models.SlugField(unique=True)
     stock= models.IntegerField()
     category=models.CharField(max_length=2, choices=Category.choices)
     description=models.TextField()

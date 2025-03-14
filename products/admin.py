@@ -9,4 +9,4 @@ class GameAdmin(admin.ModelAdmin):
         'description',
         'price'
     )
-    
+    prepopulated_fields = {'slug': ['name']}
