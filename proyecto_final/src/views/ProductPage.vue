@@ -41,7 +41,6 @@ export default defineComponent({
         .get('/api/products/')
         .then(response => {
           this.products = response.data
-          console.log(response.data)
         })
         .catch(error => {
           console.log(error);

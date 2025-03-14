@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'shared.apps.SharedConfig',
     'products.apps.ProductsConfig',
     'users.apps.UsersConfig',
+    'categories.apps.CategoriesConfig',
     'corsheaders',
 ]
 
@@ -129,7 +130,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-MEDIA_URL='/media/'
+MEDIA_URL='media/'
 MEDIA_ROOT= BASE_DIR / 'media/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  

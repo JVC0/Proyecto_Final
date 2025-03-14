@@ -24,8 +24,12 @@
 </nav>
   <router-view/>
 </template>
+<script>
 
+
+</script>
 <style>
 @import '../node_modules/bootstrap/';
+
 
 </style>

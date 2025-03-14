@@ -17,17 +17,34 @@
         <input id="password2" type="password" placeholder="Password"  v-model="password2">
 
         <button type="submit" id="submit">Create Account</button>
-        <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="notification toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            
             <div class="d-flex" v-if="errors.length">
                 <div class="toast-body" v-for="error in errors" v-bind:key="error">
-                {{error}}
+                
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             </div>
+            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center w-100">
+            </div>
+
+        <!-- <div class="notification toast alert-danger" role="alert" aria-live="assertive" aria-atomic="true" v-if="errors.length">
+            <div class="toast-header">
+                
+                <strong class="me-auto">Bootstrap</strong>
+                <small>11 mins ago</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+                <div class="toast-body" v-for="error in errors" v-bind:key="error">
+                    {{error}}
+                </div>
+            </div>
+        -->
+            <hr>
         <div class="form">
-            <p>Have an account? <a href="login.html">Login Here</a></p>
-        </div>
+            Have an account? <router-link to="/Login">Login Here</router-link>
+        </div> 
     </form>
 </template>
 <script>
@@ -46,8 +63,8 @@ export default{
     methods:{
         submitForm(){
             this.errors=[]
-            if (this.username==''){
-                this.errors.push('The username is missing')
+            if (this.email==''){
+                this.errors.push('The email is missing')
             }
             if (this.password==''){
                 this.errors.push('The password is missing')
@@ -63,7 +80,19 @@ export default{
                 axios
                     .post('api/auth/',formData)
                     .then(response=>{
+                        
                         this.$router.push('/Login')
+                    })
+                    .catch(error =>{
+                        if(error.response){
+                            for (const property in error.response.data){
+                                this.errors.push(`${property}: ${error.response.data[property]}`)
+                            }
+                            console.log(JSON.stringify(error.response.data))
+                        }else if (error.message){
+                            this.errors.push('Something went wrong.Please try again')
+                            console.log(JSON.stringify(error))
+                        }
                     })
             }
         }
