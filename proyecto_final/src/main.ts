@@ -1,16 +1,21 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import App from './App.vue'
-import router from './router'
-import 'bootstrap-icons/font/bootstrap-icons';
-import axios from 'axios';
-import { useAuthStore } from './store/auth'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import App from "./App.vue";
+import router from "./router";
+import "bootstrap-icons/font/bootstrap-icons";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-axios.defaults.baseURL='http://127.0.0.1:8000'
-const pinia = createPinia()
-const app =createApp(App)
-app.use(router)
-app.use(pinia)
-const authStore = useAuthStore()
-authStore.setCsrfToken()
-app.mount('#app')
+const app = createApp(App);
+const pinia = createPinia();
+
+app.use(router);
+app.use(pinia);
+
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
+authStore.token = localStorage.getItem("token");
+authStore.user = JSON.parse(localStorage.getItem("user") || "null");
+
+app.mount("#app");

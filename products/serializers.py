@@ -8,7 +8,7 @@ class ProductSerializer(BaseSerializer):
     def serialize_instance(self, instance) -> dict:
         return {
             'id': instance.pk,
-            'category': instance.get_category_display(),
+            # 'category': instance.get_category_display(), añadir serializador
             'name': instance.name,   
             'stock': instance.stock,
             'description': instance.description,

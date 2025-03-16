@@ -1,139 +1,128 @@
 <template>
-<div class="background">
+    <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="handleRegister">
         <h2>CREATE ACCOUNT</h2>
         <label for="email">Email</label>
-        <input id="email" type="email" placeholder="Email" v-model="email">
-        
-
-        
+        <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            required
+            v-model="email"
+        />
+        <label for="username">Username:</label>
+        <input
+            v-model="username"
+            type="text"
+            placeholder="Username"
+            id="username"
+            required
+        />
         <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Password"  v-model="password">
-
-        <label for="password2">Password</label>
-        <input id="password2" type="password" placeholder="Password"  v-model="password2">
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            required
+            v-model="password"
+        />
 
         <button type="submit" id="submit">Create Account</button>
-        <div class="notification toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            
-            <div class="d-flex" v-if="errors.length">
-                <div class="toast-body" v-for="error in errors" v-bind:key="error">
-                
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            </div>
-            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center w-100">
-            </div>
 
-        <!-- <div class="notification toast alert-danger" role="alert" aria-live="assertive" aria-atomic="true" v-if="errors.length">
-            <div class="toast-header">
-                
-                <strong class="me-auto">Bootstrap</strong>
-                <small>11 mins ago</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-                <div class="toast-body" v-for="error in errors" v-bind:key="error">
-                    {{error}}
-                </div>
-            </div>
-        -->
-            <hr>
         <div class="form">
-            Have an account? <router-link to="/Login">Login Here</router-link>
-        </div> 
+            <p>
+                Already have an account?
+                <router-link to="/login">Login here</router-link>.
+            </p>
+        </div>
     </form>
+    <p v-if="error" class="error">{{ error }}</p>
 </template>
-<script>
-import axios from 'axios'
 
-export default{
-    name: 'SignUp',
-    data(){
-        return{
-            email:'',
-            password:'',
-            password2:'',
-            errors:[]
-        }
-    },
-    methods:{
-        submitForm(){
-            this.errors=[]
-            if (this.email==''){
-                this.errors.push('The email is missing')
-            }
-            if (this.password==''){
-                this.errors.push('The password is missing')
-            }
-            if (this.password   !== this.password2){
-                this.errors.push('The password dosen\'t match')
-            }
-            if (!this.errors.length){
-                const formData ={
-                    username: this.username,
-                    password: this.password
+<script lang="ts">
+import { ref } from "vue";
+import api from "@/utils/api";
+import { useRouter } from "vue-router";
+import axios from "axios";
+export default {
+    name: "SignupPage",
+    setup() {
+        const email = ref("");
+        const username = ref("");
+        const password = ref("");
+        const error = ref("");
+        const router = useRouter();
+
+        const handleRegister = async () => {
+            try {
+                const response = await api.post("/api/auth/register/", {
+                    email: email.value,
+                    username: username.value,
+                    password: password.value,
+                });
+                if (response.data.message) {
+                    router.push("/login");
                 }
-                axios
-                    .post('api/auth/',formData)
-                    .then(response=>{
-                        
-                        this.$router.push('/Login')
-                    })
-                    .catch(error =>{
-                        if(error.response){
-                            for (const property in error.response.data){
-                                this.errors.push(`${property}: ${error.response.data[property]}`)
-                            }
-                            console.log(JSON.stringify(error.response.data))
-                        }else if (error.message){
-                            this.errors.push('Something went wrong.Please try again')
-                            console.log(JSON.stringify(error))
-                        }
-                    })
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err)) {
+                    error.value =
+                        err.response?.data?.error ||
+                        "Registration failed. Please try again.";
+                } else {
+                    error.value = "An unexpected error occurred.";
+                }
             }
-        }
-    }
-}
+        };
+
+        return {
+            email,
+            username,
+            password,
+            error,
+            handleRegister,
+        };
+    },
+};
 </script>
 <style>
-*::after, *::before{
+*::after,
+*::before {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
-body{
-    background-image: url('https://wallpapercat.com/w/full/8/b/6/854961-1920x1080-desktop-full-hd-kfc-wallpaper-image.jpg');
+body {
+    background-image: url("https://wallpapercat.com/w/full/8/b/6/854961-1920x1080-desktop-full-hd-kfc-wallpaper-image.jpg");
     background-size: cover;
 }
 
-.background{
+.background {
     width: 430px;
-    height: 20px;
+    height: 520px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
 }
 
-.shape:first-child{
+.shape:first-child {
     background: linear-gradient(#1845ad, #23a2f6);
     left: -80px;
     top: -80px;
 }
 
-.shape:last-child{
+.shape:last-child {
     background: linear-gradient(#ad6018, #f69723);
     left: -30px;
     top: -80px;
-} 
+}
 
-form{
-    height: 620px;
+form {
+    height: 560px;
     width: 400px;
     background-color: rgba(160, 160, 160, 0.3);
     position: absolute;
@@ -142,12 +131,12 @@ form{
     top: 50%;
     left: 50%;
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     padding: 50px 35px;
     box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
 }
 
-form *{
+form * {
     color: white;
     font-family: "Poppins", sans-serif;
     letter-spacing: 0.5px;
@@ -155,21 +144,21 @@ form *{
     border: none;
 }
 
-form h3{
+form h3 {
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
 }
 
-form label{
+form label {
     display: block;
     margin-top: 30px;
     font-size: 16px;
     font-weight: 500;
 }
 
-input{
+input {
     display: block;
     height: 50px;
     width: 100%;
@@ -181,7 +170,7 @@ input{
     font-weight: 300;
 }
 
-button{
+button {
     margin-top: 30px;
     width: 100%;
     background-color: white;
@@ -191,4 +180,8 @@ button{
     cursor: pointer;
     color: black;
     border-radius: 5px;
-}</style>
+}
+.error {
+    color: red;
+}
+</style>
