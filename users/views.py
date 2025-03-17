@@ -61,15 +61,14 @@ def register_user(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-@csrf_exempt  # Disable CSRF protection for this view (temporarily for testing)
+@csrf_exempt
 def login_view(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            email = data.get("email")  # Use 'email' instead of 'username'
+            email = data.get("email")
             password = data.get("password")
 
-            # Find the user by email
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
@@ -77,7 +76,6 @@ def login_view(request):
                     {"error": "User with this email does not exist"}, status=401
                 )
 
-            # Authenticate the user
             user = authenticate(request, username=user.username, password=password)
 
             if user is not None:
@@ -89,7 +87,7 @@ def login_view(request):
                             "username": user.username,
                             "email": user.email,
                         },
-                        "token": "your-token-here",  # Add a token if needed
+                        "token": "your-token-here",
                     }
                 )
             else:
