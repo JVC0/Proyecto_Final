@@ -10,12 +10,12 @@
                     </div>
                     <div class="inputForm">
                         <input
-                            type="email"
+                            type="username"
                             class="input"
-                            id="email"
-                            placeholder="Enter your Email"
+                            id="username"
+                            placeholder="Enter your username"
                             required
-                            v-model="email"
+                            v-model="username"
                         />
                     </div>
                     <div class="flex-column">
@@ -48,13 +48,13 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 const authStore = useAuthStore();
 
 const handleLogin = async () => {
     try {
-        await authStore.login(email.value, password.value);
+        await authStore.login(username.value, password.value);
     } catch (error) {
         console.error("Login failed:", error);
     }

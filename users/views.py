@@ -33,9 +33,6 @@ def get_token(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-# views.py
-
-
 @ensure_csrf_cookie
 def register_user(request):
     if request.method == "POST":
@@ -61,22 +58,13 @@ def register_user(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-@csrf_exempt
 def login_view(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            email = data.get("email")
+            username = data.get("username")
             password = data.get("password")
-
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                return JsonResponse(
-                    {"error": "User with this email does not exist"}, status=401
-                )
-
-            user = authenticate(request, username=user.username, password=password)
+            user = authenticate(request, username=username, password=password)
 
             if user is not None:
                 login(request, user)

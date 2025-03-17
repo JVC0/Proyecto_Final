@@ -9,7 +9,6 @@ interface User {
     email: string;
 }
 
-// Utility function to get the CSRF token from cookies
 const getCsrfToken = (): string | null => {
     const cookieValue = document.cookie
         .split("; ")
@@ -26,7 +25,6 @@ export const useAuthStore = defineStore("auth", () => {
     const router = useRouter();
     const isAuthenticated = computed(() => !!token.value);
 
-    // Function to make authenticated API requests with CSRF token
     const makeAuthenticatedRequest = async (url: string, data: any) => {
         const csrfToken = getCsrfToken();
         if (!csrfToken) {
@@ -41,12 +39,12 @@ export const useAuthStore = defineStore("auth", () => {
         return response;
     };
 
-    const login = async (email: string, password: string) => {
+    const login = async (username: string, password: string) => {
         try {
             const response = await makeAuthenticatedRequest(
                 "/api/auth/login/",
                 {
-                    email,
+                    username,
                     password,
                 }
             );
