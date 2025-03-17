@@ -35,8 +35,9 @@
                         Login
                     </button>
                 </div>
-                <p class="p">
-                    Don't have an account? <a href="register.html">Sign Up</a>.
+                <p>
+                    Don't have an account?
+                    <router-link to="/Register">Sign Up</router-link>.
                 </p>
             </form>
         </div>
@@ -142,7 +143,7 @@ input {
     font-weight: 300;
 }
 
-button {
+.button-submit {
     margin-top: 30px;
     width: 100%;
     background-color: white;

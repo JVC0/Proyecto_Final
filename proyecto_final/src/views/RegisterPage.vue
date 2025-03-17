@@ -30,7 +30,9 @@
             v-model="password"
         />
 
-        <button type="submit" id="submit">Create Account</button>
+        <button type="submit" id="submit" class="button-submit">
+            Create Account
+        </button>
 
         <div class="form">
             <p>
@@ -46,9 +48,10 @@
 import { ref } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import axios from "axios"; // Import axios for type checking
+
 export default {
-    name: "SignupPage",
+    name: "RegisterPage",
     setup() {
         const email = ref("");
         const username = ref("");
@@ -58,20 +61,45 @@ export default {
 
         const handleRegister = async () => {
             try {
-                const response = await api.post("/api/auth/register/", {
-                    email: email.value,
-                    username: username.value,
-                    password: password.value,
-                });
+                // Get the CSRF token from the cookie
+                const csrfToken = document.cookie
+                    .split("; ")
+                    .find((row) => row.startsWith("csrftoken="))
+                    ?.split("=")[1];
+
+                if (!csrfToken) {
+                    throw new Error("CSRF token not found.");
+                }
+
+                // Include the CSRF token in the request headers
+                const response = await api.post(
+                    "/api/auth/register/",
+                    {
+                        email: email.value,
+                        username: username.value,
+                        password: password.value,
+                    },
+                    {
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                        },
+                    }
+                );
+
                 if (response.data.message) {
                     router.push("/login");
                 }
-            } catch (err: unknown) {
+            } catch (err) {
+                // Type guard to check if err is an AxiosError
                 if (axios.isAxiosError(err)) {
                     error.value =
                         err.response?.data?.error ||
                         "Registration failed. Please try again.";
+                } else if (err instanceof Error) {
+                    // Handle other types of errors
+                    error.value = err.message;
                 } else {
+                    // Handle unknown errors
                     error.value = "An unexpected error occurred.";
                 }
             }
@@ -170,7 +198,7 @@ input {
     font-weight: 300;
 }
 
-button {
+.button-submit {
     margin-top: 30px;
     width: 100%;
     background-color: white;

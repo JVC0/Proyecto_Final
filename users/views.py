@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
 import json
-
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
@@ -36,7 +36,7 @@ def get_token(request):
 # views.py
 
 
-@csrf_exempt
+@ensure_csrf_cookie
 def register_user(request):
     if request.method == "POST":
         try:

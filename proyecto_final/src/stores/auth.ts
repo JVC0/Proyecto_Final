@@ -2,11 +2,21 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
+
 interface User {
     id: number;
     username: string;
     email: string;
 }
+
+// Utility function to get the CSRF token from cookies
+const getCsrfToken = (): string | null => {
+    const cookieValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("csrftoken="))
+        ?.split("=")[1];
+    return cookieValue || null;
+};
 
 export const useAuthStore = defineStore("auth", () => {
     const token = ref<string | null>(localStorage.getItem("token") || null);
@@ -16,12 +26,30 @@ export const useAuthStore = defineStore("auth", () => {
     const router = useRouter();
     const isAuthenticated = computed(() => !!token.value);
 
+    // Function to make authenticated API requests with CSRF token
+    const makeAuthenticatedRequest = async (url: string, data: any) => {
+        const csrfToken = getCsrfToken();
+        if (!csrfToken) {
+            throw new Error("CSRF token not found.");
+        }
+
+        const response = await api.post(url, data, {
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+        });
+        return response;
+    };
+
     const login = async (email: string, password: string) => {
         try {
-            const response = await api.post("/api/auth/login/", {
-                email,
-                password,
-            });
+            const response = await makeAuthenticatedRequest(
+                "/api/auth/login/",
+                {
+                    email,
+                    password,
+                }
+            );
             token.value = response.data.token;
             user.value = response.data.user;
             localStorage.setItem("token", token.value || "");
@@ -33,6 +61,29 @@ export const useAuthStore = defineStore("auth", () => {
         }
     };
 
+    const register = async (
+        email: string,
+        username: string,
+        password: string
+    ) => {
+        try {
+            const response = await makeAuthenticatedRequest(
+                "/api/auth/register/",
+                {
+                    email,
+                    username,
+                    password,
+                }
+            );
+            if (response.data.message) {
+                router.push("/login");
+            }
+        } catch (error) {
+            console.error("Registration failed", error);
+            throw error;
+        }
+    };
+
     const logout = () => {
         token.value = null;
         user.value = null;
@@ -40,5 +91,5 @@ export const useAuthStore = defineStore("auth", () => {
         localStorage.removeItem("user");
     };
 
-    return { token, user, isAuthenticated, login, logout };
+    return { token, user, isAuthenticated, login, register, logout };
 });
