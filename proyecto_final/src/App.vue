@@ -19,6 +19,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <router-link to="/Cart" class
+                            ><i class="bi bi-cart4"></i
+                        ></router-link>
+                    </li>
+                    <li class="nav-item">
                         <template v-if="isAuthenticated">
                             <div class="d-inline-flex align-items-center">
                                 <span class="navbar-text mb-0 me-2">

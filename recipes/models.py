@@ -14,7 +14,7 @@ class Recipe(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name="product_category",
+        related_name="recipes",
     )
 
     def __str__(self):

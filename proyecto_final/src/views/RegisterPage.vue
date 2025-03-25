@@ -48,7 +48,7 @@
 import { ref } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
-import axios from "axios"; // Import axios for type checking
+import axios from "axios";
 
 export default {
     name: "RegisterPage",
@@ -61,7 +61,6 @@ export default {
 
         const handleRegister = async () => {
             try {
-                // Get the CSRF token from the cookie
                 const csrfToken = document.cookie
                     .split("; ")
                     .find((row) => row.startsWith("csrftoken="))
@@ -71,7 +70,6 @@ export default {
                     throw new Error("CSRF token not found.");
                 }
 
-                // Include the CSRF token in the request headers
                 const response = await api.post(
                     "/api/auth/register/",
                     {
@@ -90,16 +88,13 @@ export default {
                     router.push("/login");
                 }
             } catch (err) {
-                // Type guard to check if err is an AxiosError
                 if (axios.isAxiosError(err)) {
                     error.value =
                         err.response?.data?.error ||
                         "Registration failed. Please try again.";
                 } else if (err instanceof Error) {
-                    // Handle other types of errors
                     error.value = err.message;
                 } else {
-                    // Handle unknown errors
                     error.value = "An unexpected error occurred.";
                 }
             }
