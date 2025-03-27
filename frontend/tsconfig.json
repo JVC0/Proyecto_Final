@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "NodeNext",
+    "module": "esnext",
     "strict": true,
     "jsx": "preserve",
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
-    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -15,7 +14,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env", "vue","pinia"
+      "webpack-env"
     ],
     "paths": {
       "@/*": [
@@ -34,9 +33,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "src/stores/**/*.ts"
-    
+    "tests/**/*.tsx"
   ],
   "exclude": [
     "node_modules"
