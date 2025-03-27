@@ -18,6 +18,5 @@ class ProductsAdmin(admin.ModelAdmin):
 class ProductGroupAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "products",
         "total_price",
     )
