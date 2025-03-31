@@ -8,7 +8,7 @@ def category_list(request):
     return serializer.json_response()
 
 
-# def category_detail(category_slug, request):
-#     category = Category.objects.get(slug=category_slug)
-#     serializer = CategorySerializer(category, request=request)
-#     return serializer.json_response()
+def category_detail(category_slug, request):
+    category = Category.objects.get(slug=category_slug)
+    serializer = CategorySerializer(category, request=request)
+    return serializer.json_response()
