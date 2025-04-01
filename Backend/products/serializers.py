@@ -14,7 +14,11 @@ class ProductSerializer(BaseSerializer):
             "description": instance.description,
             "price": float(instance.price),
             "image": self.build_url(instance.image.url),
-            "category": CategorySerializer(instance.category).serialize(),
+            "category": (
+                CategorySerializer(instance.category).serialize()
+                if instance.category
+                else None
+            ),
         }
 
 
