@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "users.apps.UsersConfig",
     "categories.apps.CategoriesConfig",
+    "comments.apps.CommentsConfig",
+    "recipes.apps.RecipesConfig",
     "corsheaders",
 ]
 

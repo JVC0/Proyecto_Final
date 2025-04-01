@@ -5,6 +5,7 @@ from django.conf import settings
 class Recipe(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True)
     description = models.TextField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

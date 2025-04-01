@@ -3,7 +3,6 @@ from django.conf import settings
 
 
 class Comment(models.Model):
-
     description = models.TextField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -15,6 +14,3 @@ class Comment(models.Model):
         null=True,
         related_name="comment",
     )
-
-    def __str__(self):
-        return self.name

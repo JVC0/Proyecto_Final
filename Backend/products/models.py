@@ -30,8 +30,10 @@ class ProductGroup(models.Model):
     products = models.ManyToManyField(
         "products.Product", related_name="productgroups", blank=True
     )
-    total_price = models.DecimalField(max_digits=6, decimal_places=2)
 
     @property
     def price(self):
         return sum(products.price for products in self.products.all())
+
+    def __str__(self):
+        return self.name

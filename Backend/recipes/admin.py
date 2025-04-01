@@ -8,3 +8,4 @@ class RecipeAdmin(admin.ModelAdmin):
         "name",
         "description",
     )
+    prepopulated_fields = {"slug": ["name"]}
