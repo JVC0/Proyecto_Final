@@ -15,7 +15,7 @@ class ProductSerializer(BaseSerializer):
             "price": float(instance.price),
             "image": self.build_url(instance.image.url),
             "category": (
-                CategorySerializer(instance.category).serialize()
+                CategorySerializer(instance.category, request=self.request).serialize()
                 if instance.category
                 else None
             ),
