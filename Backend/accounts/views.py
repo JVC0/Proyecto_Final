@@ -11,7 +11,7 @@ from users.models import Token
 
 
 @ensure_csrf_cookie
-def register(request):
+def user_register(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -35,7 +35,7 @@ def register(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-def login(request):
+def user_login(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -62,6 +62,6 @@ def login(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-def logout(request):
+def user_logout(request):
     logout(request)
     return JsonResponse({"success": "Logged out"})
