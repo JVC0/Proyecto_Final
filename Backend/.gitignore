@@ -136,3 +136,8 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# Base de datos y .pyc
+__pycache__/
+*.py[cod]
+db.sqlite3
