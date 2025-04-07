@@ -27,6 +27,6 @@ class ProductGroupSerializer(BaseSerializer):
             "id": instance.pk,
             "name": instance.name,
             "products": ProductSerializer(
-                instance.products, request=self.request
+                instance.products.all(), request=self.request
             ).serialize(),
         }

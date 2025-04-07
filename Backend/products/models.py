@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -31,6 +31,7 @@ class ProductGroup(models.Model):
         "products.Product", related_name="productgroups", blank=True
     )
     total_price = models.DecimalField(max_digits=6, decimal_places=2)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     @property
     def price(self):

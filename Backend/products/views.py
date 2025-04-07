@@ -16,5 +16,3 @@ def product_detail(request):
     pass
 
 
-def product_group(request):
-    pass
