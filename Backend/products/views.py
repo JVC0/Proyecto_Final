@@ -17,5 +17,3 @@ def product_detail(request, product_slug):
     return serializer.json_response()
 
 
-def product_group(request):
-    pass
