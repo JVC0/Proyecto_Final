@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .serializers import ProfileSerializer
 from products.serializers import ProductGroupSerializer
 from products.models import ProductGroup
+from shared.serializers import JsonResponse
 
 
 def user_profile(request, username):
@@ -16,8 +17,10 @@ def user_profile(request, username):
 #     pass
 
 
-# def delete_profile(request):
-#     pass
+def delete_profile(request, username):
+    profile_owner = User.objects.get(username=username)
+    profile_owner.delete()
+    return JsonResponse({"message": "Usuario eliminado."})
 
 
 def profile_groups(request, username):
