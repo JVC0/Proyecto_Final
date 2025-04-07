@@ -140,4 +140,5 @@ GitHub.sublime-settings
 # Base de datos y .pyc
 __pycache__/
 *.py[cod]
+*.pyc
 db.sqlite3
