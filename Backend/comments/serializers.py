@@ -12,5 +12,5 @@ class CommentSerializer(BaseSerializer):
             "description": instance.description,
             "created_at": instance.created_at,
             "updated_at": instance.updated_at,
-            "user": UserSerializer(instance.user).serialize(),
+            "user": (UserSerializer(instance.user).serialize()),
         }

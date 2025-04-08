@@ -9,8 +9,11 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     recipe = models.ForeignKey(
         "recipes.Recipe",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name="comment",
+        related_name="comments",
     )
+
+    def __str__(self):
+        return self.description
