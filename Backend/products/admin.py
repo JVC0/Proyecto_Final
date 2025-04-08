@@ -14,5 +14,5 @@ class ProductsAdmin(admin.ModelAdmin):
 
 @admin.register(ProductGroup)
 class ProductGroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "price")
+    list_display = ("name", )
     filter_horizontal = ("products",)
