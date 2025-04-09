@@ -1,8 +1,12 @@
 from .models import Comment
 import json
 from django.http import JsonResponse
+from .decorators import owner_checker
+from shared.decorators import token_checker, check_method
 
 
+@check_method("POST")
+@token_checker
 def add_comment(request):
     data = json.loads(request.body)
     description = data.get("description")
@@ -13,6 +17,9 @@ def add_comment(request):
     return JsonResponse({"message": "Comment was added."})
 
 
+@check_method("POST")
+@token_checker
+@owner_checker
 def delete_comment(request):
     data = json.loads(request.body)  # Pasar id en el front para eliminar comment
     id = data.get("id")
@@ -20,5 +27,7 @@ def delete_comment(request):
     recipe.delete()
 
 
+@token_checker
+@owner_checker
 def edit_comment(request):
     pass

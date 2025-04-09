@@ -1,6 +1,6 @@
 from .models import Category
 from .serializers import CategorySerializer
-from .decorators import check_method
+from shared.decorators import check_method
 
 
 @check_method("GET")
