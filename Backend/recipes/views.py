@@ -2,14 +2,14 @@ from .models import Recipe
 from .serializers import RecipeSerializer
 import json
 from django.http import JsonResponse
-
+from .decorators import object_exists
 
 def recipe_list(request):
     recipes = Recipe.objects.all()
     serializer = RecipeSerializer(recipes, request=request)
     return serializer.json_response()
 
-
+@object_exists(Recipe, "recipe_slug")
 def recipe_detail(request, recipe_slug):
     recipes = Recipe.objects.get(slug=recipe_slug)
     serializer = RecipeSerializer(recipes, request=request)
