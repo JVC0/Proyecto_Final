@@ -1,4 +1,5 @@
 <template>
+    <!-- Keep the template the same as before -->
     <div class="products-container">
         <div v-for="product in products" :key="product.id" class="product-card">
             <div class="card" style="width: 18rem">
@@ -11,11 +12,36 @@
                 </figure>
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
+                    <span class="badge rounded-pill ">{{product.category.name}}</span>
                     <p class="card-text">{{ product.description }}</p>
                     <p>${{ product.price }}</p>
-                    <button @click="addToCart(product)" class="btn btn-primary">
+                    <button @click="addToCart(product)" class=" float-start btn btn-primary">
                         Add to Cart
                     </button>
+                    <div class="input-group float-start mb-3">
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            @click="decrementQuantity(product)"
+                            :disabled="quantities[product.id] <= 1"
+                        >
+                            -
+                        </button>
+                        <input
+                            type="number"
+                            class="form-control text-center"
+                            v-model.number="quantities[product.id]"
+                            min="1"
+                            @change="validateQuantity(product)"
+                        >
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            @click="incrementQuantity(product)"
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -31,7 +57,15 @@ interface Product {
     id: number;
     image: string;
     name: string;
+    slug: string;
     price: number;
+    description: string;
+    category: Category;
+}
+
+interface Category {
+    id: number;
+    name: string;
     description: string;
 }
 
@@ -40,6 +74,7 @@ export default defineComponent({
     data() {
         return {
             products: [] as Product[],
+            quantities: {} as Record<number, number>,
         };
     },
     setup() {
@@ -54,21 +89,37 @@ export default defineComponent({
             api.get("/api/products/")
                 .then((response) => {
                     this.products = response.data;
+                    this.products.forEach(product => {
+                        this.quantities[product.id] = 1;
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         },
+        incrementQuantity(product: Product) {
+            this.quantities[product.id]++;
+        },
+        decrementQuantity(product: Product) {
+            if (this.quantities[product.id] > 1) {
+                this.quantities[product.id]--;
+            }
+        },
+        validateQuantity(product: Product) {
+        const quantity = this.quantities[product.id];
+        if (isNaN(quantity) || quantity < 1) {
+        this.quantities[product.id] = 1;
+        }
+    },
         addToCart(product: Product) {
             this.cartStore.addToCart({
                 product: {
                     id: product.id,
                     name: product.name,
                     price: product.price,
-                    get_absolute_url: `/products/${product.id}`, // Add this URL
-                    // Add any other required product properties
+                    get_absolute_url: `/api/products/${product.slug}`,
                 },
-                quantity: 1, // Default quantity when adding to cart
+                quantity: this.quantities[product.id],
             });
         },
     },
@@ -76,6 +127,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 .products-container {
     display: flex;
     flex-wrap: wrap;
@@ -84,5 +140,13 @@ export default defineComponent({
 }
 .product-card {
     margin-bottom: 20px;
+}
+.input-group {
+    width: 120px;
+    margin: 0 auto 15px;
+}
+
+.badge{
+    background-color: rgb(166, 3, 184);
 }
 </style>

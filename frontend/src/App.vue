@@ -4,7 +4,6 @@
             <router-link to="/" class="navbar-brand active">
                 <strong>Home</strong>
             </router-link>
-
             <button
                 class="navbar-toggler"
                 type="button"
@@ -18,17 +17,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <router-link to="/Cart" class
-                            ><i class="bi bi-cart4"></i
-                        ></router-link>
+                    <li class="nav-item mt-2 me-2">
+                        <router-link to="/Cart">
+                            <i class="bi bi-cart4 custom-cart"></i>
+                        </router-link>
                     </li>
                     <li class="nav-item">
                         <template v-if="isAuthenticated">
                             <div class="d-inline-flex align-items-center">
                                 <span class="navbar-text mb-0 me-2">
-                                    Hi there {{ authStore.user?.username }}! You
-                                    are logged in.
+                                    Hi there {{ authStore.user?.username }}!
                                 </span>
                                 <button
                                     class="btn btn-outline-danger"
@@ -73,5 +71,8 @@ const handleLogout = () => {
 </script>
 
 <style>
-/* Your existing styles here */
+.custom-cart{
+    margin-top: 100px;
+}
+
 </style>
