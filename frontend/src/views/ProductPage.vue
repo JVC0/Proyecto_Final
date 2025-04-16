@@ -1,5 +1,4 @@
 <template>
-    <!-- Keep the template the same as before -->
     <div class="products-container">
         <div v-for="product in products" :key="product.id" class="product-card">
             <div class="card" style="width: 18rem">
@@ -11,9 +10,10 @@
                     />
                 </figure>
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
+                    <h5 class="card-title">
+                        <router-link :to="{ name: 'ProductDetail', params: { slug: product.slug }}">{{ product.name }}</router-link>
+                    </h5>
                     <span class="badge rounded-pill ">{{product.category.name}}</span>
-                    <p class="card-text">{{ product.description }}</p>
                     <p>${{ product.price }}</p>
                     <button @click="addToCart(product)" class=" float-start btn btn-primary">
                         Add to Cart
