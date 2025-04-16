@@ -3,6 +3,7 @@ import ProductPage from "@/views/ProductPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import RegisterPage from "@/views/RegisterPage.vue";
 import CartPage from "@/views/CartPage.vue";
+import ProfilePage from "@/views/ProfilePage.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -23,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Cart",
         name: "CartPage",
         component: CartPage,
+    },
+    {
+        path: "/Profile",
+        name: "ProfilePage",
+        component: ProfilePage,
     },
 ];
 
