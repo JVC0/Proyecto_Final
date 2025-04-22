@@ -6,7 +6,7 @@
                     <h2>Login</h2>
 
                     <div class="flex-column">
-                        <label>Email </label>
+                        <label>Username </label>
                     </div>
                     <div class="inputForm">
                         <input

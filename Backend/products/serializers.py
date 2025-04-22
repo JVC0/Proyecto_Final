@@ -10,6 +10,7 @@ class ProductSerializer(BaseSerializer):
         return {
             "id": instance.pk,
             "name": instance.name,
+            "slug": instance.slug,
             "stock": instance.stock,
             "description": instance.description,
             "price": float(instance.price),

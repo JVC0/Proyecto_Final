@@ -3,6 +3,7 @@ import ProductPage from "@/views/ProductPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import RegisterPage from "@/views/RegisterPage.vue";
 import CartPage from "@/views/CartPage.vue";
+import ProductDetail from "@/views/ProductDetail.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 const routes: Array<RouteRecordRaw> = [
     {
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Cart",
         name: "CartPage",
         component: CartPage,
+    },
+    {
+        path: "/Product/:slug",
+        name: "ProductDetail",
+        component: ProductDetail,
     },
     {
         path: "/Profile/:username",
