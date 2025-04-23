@@ -1,55 +1,84 @@
 <template>
-    <div v-for="product in products" :key="product.id">
-        <div class="card" style="width: 18rem">
-            <figure class="image">
-                <img
-                    v-bind:src="product.image"
-                    class="card-img-top"
-                    alt="no funciona"
-                />
-            </figure>
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">{{ product.description }}</p>
-                <a href="#" class="btn btn-primary">${{ product.price }}</a>
+    <div class="groups_content">
+        <div v-for="productGroup in productGroups" :key="productGroup.id">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ productGroup.name }}</h5>
+                    <div v-for="product in productGroup.products" :key="product.id">
+                        {{ product.name }}
+                    </div>
+                    <button class="btn btn-primary">Ver grupo</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-// import { defineComponent } from "vue";
-// import axios from "axios";
+import { defineComponent } from "vue";
+import { useRoute } from "vue-router";
+import api from "@/utils/api";
 
-// interface ProductGroup {
-//     id: number;
-//     image: string;
-//     name: string;
-//     price: number;
-//     description: string;
-// }
+interface ProductGroup {
+    id: number;
+    name: string;
+    products: Product[];
+}
 
-// export default defineComponent({
-//     name: "ProductPage",
-//     data() {
-//         return {
-//             products: [] as Product[],
-//         };
-//     },
-//     mounted() {
-//         this.getProducts();
-//     },
-//     methods: {
-//         getProducts() {
-//             axios
-//                 .get("/api/products/")
-//                 .then((response) => {
-//                     this.products = response.data;
-//                 })
-//                 .catch((error) => {
-//                     console.log(error);
-//                 });
-//         },
-//     },
-// });
+interface Product {
+    id: number;
+    image: string;
+    name: string;
+    slug: string;
+    price: number;
+    description: string;
+    category: Category;
+}
+
+interface Category {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export default defineComponent({
+    name: "GroupPage",
+    data() {
+        return {
+            productGroups: null as ProductGroup[] | null,
+        };
+    },
+    setup() {
+        const route = useRoute();
+        return { route };
+    },
+    mounted() {
+        this.getProduct();
+    },
+    methods: {
+        getProduct() {
+            const username = this.route.params.username;
+            api.get(`/api/profile/${username}/groups/`)
+                .then((response) => {
+                    this.productGroups = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },}});
+
 </script>
+
+<style scoped>
+.groups_content {
+    display: flex;
+    flex-direction: row;
+}
+
+.card {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-left: 40px;
+}
+</style>

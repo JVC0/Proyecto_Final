@@ -25,7 +25,7 @@ def delete_profile(request, username):
 
 def profile_groups(request, username):
     group_owner = User.objects.get(username=username)
-    p_groups = ProductGroup.objects.get(user=group_owner)
+    p_groups = ProductGroup.objects.filter(user=group_owner)
     serializer = ProductGroupSerializer(p_groups, request=request)
     return serializer.json_response()
 

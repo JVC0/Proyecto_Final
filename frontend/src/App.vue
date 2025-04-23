@@ -26,7 +26,10 @@
                         <template v-if="isAuthenticated">
                             <div class="d-inline-flex align-items-center">
                                 <span class="navbar-text mb-0 me-2">
-                                    Hi there {{ authStore.user?.username }}!
+                                    Hi there
+                                    <router-link :to="{ name: 'ProfilePage', params: { username: authStore.user?.username}}">
+                                         {{ authStore.user?.username }}!
+                                    </router-link>
                                 </span>
                                 <button
                                     class="btn btn-outline-danger"

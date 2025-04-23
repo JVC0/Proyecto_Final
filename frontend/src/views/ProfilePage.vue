@@ -9,7 +9,7 @@
             <br>
             <div class="profile_email"><span>{{ profile.user.email }}</span></div>
             <br>
-            <button class="btn btn-primary">Ver grupos de productos</button>
+            <router-link class="btn btn-primary" :to="{ name: 'GroupPage', params: { username: profile.user.username }}"> Ver Grupos</router-link>
             <br>
             <div class="profile_bio"><span>{{ profile.bio }}</span></div>
         </div>
@@ -80,5 +80,4 @@ export default defineComponent({
 .profile_email {
     text-decoration: underline;
 }
-
 </style>
