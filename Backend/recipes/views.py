@@ -2,7 +2,7 @@ from .models import Recipe
 from .serializers import RecipeSerializer
 import json
 from django.http import JsonResponse
-from .decorators import object_exists
+from shared.decorators import object_exists
 
 def recipe_list(request):
     recipes = Recipe.objects.all()
