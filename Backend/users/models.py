@@ -27,6 +27,7 @@ class Token(models.Model):
     )
     key = models.UUIDField(unique=True, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_email_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Token for {self.user.username}"

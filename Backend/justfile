@@ -7,19 +7,30 @@ venv-path := join(justfile_dir(), venv-name)
 pip-cmd := "pip"  # Default to pip for Windows
 
 # ==============================================================================
+# ENVIRONMENT SETUP
+# ==============================================================================
+
+# Install requirements from requirements.txt
+install:
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+
+# ==============================================================================
 # DJANGO RECIPES
 # ==============================================================================
 
-# Launch development server
-runserver: 
+
+a:
+    .venv\Scripts\activate
+
+runserver:
     python manage.py runserver
 
-# Launch Django interactive shell
 sh:
     python manage.py shell
 
 alias mm := makemigrations
-# Make Django migrations
+
 makemigrations:
     python manage.py makemigrations
 
@@ -28,12 +39,14 @@ alias m := migrate
 migrate:
     python manage.py migrate
 
+worker:
+    start wsl
+    rqworker --worker-class simpleworker.SimpleWorker default
 alias c := check
-# Check if Django project is correct
+
 check:
     python manage.py check
 
-# Add a new app and install it on settings.py
 startapp app:
     python manage.py startapp {{ app }}
     $APP_CLASS = '{{ app }}'
