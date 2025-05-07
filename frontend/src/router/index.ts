@@ -6,6 +6,7 @@ import CartPage from "@/views/CartPage.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import GroupPage from "@/views/GroupPage.vue"
+import GroupDetail from "@/views/GroupDetail.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
