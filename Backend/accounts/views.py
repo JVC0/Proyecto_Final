@@ -80,7 +80,7 @@ def user_logout(request):
     return JsonResponse({"success": "Logged out"})
 
 
-def verify_email(request, token):
+def verify_email(token):
     if not token:
         return JsonResponse({"error": "Token is required"}, status=400)
 
