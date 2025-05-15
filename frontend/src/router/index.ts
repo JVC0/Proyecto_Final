@@ -6,6 +6,9 @@ import CartPage from "@/views/CartPage.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import GroupPage from "@/views/GroupPage.vue"
+import GroupDetail from "@/views/GroupDetail.vue";
+
+
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -42,6 +45,11 @@ const routes: Array<RouteRecordRaw> = [
         name: "GroupPage",
         component: GroupPage,
     },
+    {
+        path: "/Profile/:username/groups/:id",
+        name: "GroupDetail",
+        component: GroupDetail,
+    }
 ];
 
 const router = createRouter({
