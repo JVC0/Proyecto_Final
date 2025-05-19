@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_rq",
     "accounts.apps.AccountsConfig",
+    "carts.apps.CartsConfig",
 ]
 
 MIDDLEWARE = [
