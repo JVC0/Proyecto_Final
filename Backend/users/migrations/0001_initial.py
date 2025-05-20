@@ -21,7 +21,6 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('key', models.UUIDField(default=uuid.uuid4, unique=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('is_email_verified', models.BooleanField(default=False)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='token', to=settings.AUTH_USER_MODEL)),
             ],
         ),

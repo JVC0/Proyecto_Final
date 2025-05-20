@@ -45,6 +45,11 @@ const routes: Array<RouteRecordRaw> = [
         component: GroupPage,
     },
     {
+        path: "/Profile/:username/groups/:id",
+        name: "GroupDetail",
+        component: GroupDetail,
+    }
+    {
     path: "/Cart/payment",
         name: "PaymentPage",
         component: PaymentPage,

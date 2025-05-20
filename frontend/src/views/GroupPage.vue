@@ -7,7 +7,15 @@
 					<div v-for="product in productGroup.products" :key="product.id">
 						{{ product.name }}
 					</div>
-					<button class="btn btn-primary">Ver grupo</button>
+					<router-link
+						class="btn btn-primary"
+						:to="{
+							name: 'GroupDetail',
+							params: { username: route.params.username, id: productGroup.id },
+						}"
+					>
+						Ver Grupo</router-link
+					>
 				</div>
 			</div>
 		</div>
