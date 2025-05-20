@@ -14,7 +14,9 @@
 								{{ product.name }}
 							</h4>
 							<div class="d-flex flex-row my-3">
-								<span class="text-success">In stock</span>
+								<span :class="product.stock > 0 ? 'text-success' : 'text-danger'">
+									{{ product.stock > 0 ? `In stock (${product.stock} available)` : "Out of stock" }}
+								</span>
 							</div>
 							<div class="mb-3">
 								<span class="h5">${{ product.price }}</span>
@@ -24,7 +26,7 @@
 								{{ product.description }}
 							</p>
 							<hr />
-							<div class="row mb-4">
+							<div class="row mb-4" v-if="product.stock > 0">
 								<div class="col-md-4 col-6 mb-3">
 									<label for="quantity-input" class="mb-2 d-block">Quantity</label>
 									<div class="input-group mb-3" style="width: 170px">
@@ -37,26 +39,26 @@
 										>
 											<i class="bi bi-dash"></i>
 										</button>
-										<input
-											id="quantity-input"
-											type="number"
-											min="1"
-											class="form-control text-center border border-secondary"
-											v-model.number="quantity"
-											aria-label="Quantity"
-										/>
+										<span class="form-control text-center border border-secondary quantity-display">
+											{{ quantity }}
+										</span>
 										<button
 											class="btn btn-light border border-secondary px-3"
 											type="button"
 											@click="incrementQuantity"
 											data-mdb-ripple-color="dark"
+											:disabled="quantity >= product.stock"
 										>
 											<i class="bi bi-plus"></i>
 										</button>
 									</div>
 								</div>
 							</div>
-							<button @click="addToCart" class="btn btn-primary shadow-0" :disabled="loading">
+							<button
+								@click="addToCart"
+								class="btn btn-primary shadow-0"
+								:disabled="loading || product.stock === 0 || quantity > product.stock"
+							>
 								<template v-if="!loading">
 									<i class="me-1 fa fa-shopping-basket"></i> Add to cart
 								</template>
@@ -69,7 +71,7 @@
 									Adding...
 								</template>
 							</button>
-							<div v-if="message" class="alert alert-success mt-3">
+							<div v-if="message" class="alert mt-3" :class="messageType">
 								{{ message }}
 							</div>
 						</div>
@@ -92,14 +94,23 @@ import { useRoute } from "vue-router";
 import api from "@/utils/api";
 import type { Product } from "@/types/product";
 
+interface ProductDetailData {
+	product: Product | null;
+	quantity: number;
+	loading: boolean;
+	message: string;
+	messageType: string;
+}
+
 export default defineComponent({
 	name: "ProductDetail",
-	data() {
+	data(): ProductDetailData {
 		return {
-			product: null as Product | null,
+			product: null,
 			quantity: 1,
-			message: "",
 			loading: false,
+			message: "",
+			messageType: "alert-success",
 		};
 	},
 	setup() {
@@ -118,12 +129,21 @@ export default defineComponent({
 			return csrfToken || "";
 		},
 		async getProduct() {
-			const slug = this.route.params.slug;
-			const response = await api.get(`/api/products/${slug}/`);
-			this.product = response.data;
+			try {
+				const slug = this.route.params.slug;
+				const response = await api.get(`/api/products/${slug}/`);
+				this.product = response.data;
+				if (this.product) {
+					this.quantity = Math.min(1, this.product.stock);
+				}
+			} catch (error) {
+				console.error("Error fetching product:", error);
+			}
 		},
 		incrementQuantity() {
-			this.quantity++;
+			if (this.product && this.quantity < this.product.stock) {
+				this.quantity++;
+			}
 		},
 		decrementQuantity() {
 			if (this.quantity > 1) {
@@ -131,34 +151,68 @@ export default defineComponent({
 			}
 		},
 		async addToCart() {
-			if (!this.product) return;
+			if (!this.product || this.product.stock === 0 || this.quantity > this.product.stock) return;
 
 			this.loading = true;
 			this.message = "";
+			this.messageType = "alert-success";
 
-			const csrfToken = this.getCsrfToken();
-			const response = await api.post(
-				`/api/cart/add/${this.product.id}/`,
-				{ quantity: this.quantity },
-				{
-					headers: {
-						"X-CSRFToken": csrfToken,
-					},
-				}
-			);
+			try {
+				const csrfToken = this.getCsrfToken();
+				const response = await api.post(
+					`/api/cart/add/${this.product.id}/`,
+					{ quantity: this.quantity },
+					{
+						headers: {
+							"X-CSRFToken": csrfToken,
+						},
+					}
+				);
 
-			this.message = response.data.message || `${this.quantity} item(s) added to cart`;
-			this.loading = false;
+				this.message = response.data.message || `${this.quantity} item(s) added to cart`;
+				setTimeout(() => {
+					this.message = "";
+				}, 3000);
+			} catch (error) {
+				console.error("Error adding to cart:", error);
+				this.message = "Failed to add product to cart";
+				this.messageType = "alert-danger";
+			} finally {
+				this.loading = false;
+			}
+		},
+	},
+	watch: {
+		"product.stock"(newStock) {
+			if (this.quantity > newStock) {
+				this.quantity = Math.max(1, Math.min(this.quantity, newStock));
+			}
 		},
 	},
 });
 </script>
 
-<style>
+<style scoped>
 img {
 	width: 600px;
+	max-height: 600px;
+	object-fit: contain;
 }
 .custom-box {
 	margin-top: 100px;
+}
+.quantity-display {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+}
+.alert-success {
+	background-color: #d1e7dd;
+	color: #0f5132;
+}
+.alert-danger {
+	background-color: #f8d7da;
+	color: #842029;
 }
 </style>

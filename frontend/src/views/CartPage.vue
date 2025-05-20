@@ -61,9 +61,9 @@
 							<strong>Total</strong>
 							<strong>${{ total.toFixed(2) }}</strong>
 						</div>
-						<button class="btn btn-primary w-100" :disabled="cartItems.length === 0">
+						<router-link class="btn btn-primary w-100" to="/Cart/payment">
 							Proceed to Checkout
-						</button>
+						</router-link>
 					</div>
 				</div>
 			</div>

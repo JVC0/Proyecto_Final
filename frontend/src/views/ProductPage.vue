@@ -13,10 +13,12 @@
 					</h5>
 					<span class="badge rounded-pill">{{ product.category.name }}</span>
 					<p>${{ product.price }}</p>
+					<p v-if="product.stock > 0" class="text-muted">In stock: {{ product.stock }}</p>
+					<p v-else class="text-danger">Out of stock</p>
 					<button
 						@click="addToCart(product)"
 						class="float-start btn btn-primary"
-						:disabled="loading[product.id]"
+						:disabled="loading[product.id] || product.stock === 0"
 					>
 						<span
 							v-if="loading[product.id]"
@@ -26,7 +28,7 @@
 						></span>
 						{{ loading[product.id] ? "Adding..." : "Add to Cart" }}
 					</button>
-					<div class="input-group float-start mb-3">
+					<div class="input-group float-start mb-3" v-if="product.stock > 0">
 						<button
 							class="btn btn-outline-secondary"
 							type="button"
@@ -35,20 +37,20 @@
 						>
 							-
 						</button>
-						<input
-							type="number"
-							class="form-control text-center"
-							v-model.number="quantities[product.id]"
-							min="1"
-							@change="validateQuantity(product)"
-						/>
+						<span class="form-control text-center quantity-display">
+							{{ quantities[product.id] }}
+						</span>
 						<button
 							class="btn btn-outline-secondary"
 							type="button"
 							@click="incrementQuantity(product)"
+							:disabled="quantities[product.id] >= product.stock"
 						>
 							+
 						</button>
+					</div>
+					<div v-if="message[product.id]" class="alert" :class="messageType[product.id]">
+						{{ message[product.id] }}
 					</div>
 				</div>
 			</div>
@@ -69,6 +71,7 @@ export default defineComponent({
 			quantities: {} as Record<number, number>,
 			loading: {} as Record<number, boolean>,
 			message: {} as Record<number, string>,
+			messageType: {} as Record<number, string>,
 		};
 	},
 	mounted() {
@@ -81,9 +84,10 @@ export default defineComponent({
 				.then((response) => {
 					this.products = response.data;
 					this.products.forEach((product) => {
-						this.quantities[product.id] = 1;
+						this.quantities[product.id] = Math.min(1, product.stock);
 						this.loading[product.id] = false;
 						this.message[product.id] = "";
+						this.messageType[product.id] = "";
 					});
 				})
 				.catch((error) => {
@@ -91,17 +95,13 @@ export default defineComponent({
 				});
 		},
 		incrementQuantity(product: Product) {
-			this.quantities[product.id]++;
+			if (this.quantities[product.id] < product.stock) {
+				this.quantities[product.id]++;
+			}
 		},
 		decrementQuantity(product: Product) {
 			if (this.quantities[product.id] > 1) {
 				this.quantities[product.id]--;
-			}
-		},
-		validateQuantity(product: Product) {
-			const quantity = this.quantities[product.id];
-			if (isNaN(quantity) || quantity < 1) {
-				this.quantities[product.id] = 1;
 			}
 		},
 		getCsrfToken() {
@@ -112,10 +112,11 @@ export default defineComponent({
 			return cookieValue || "";
 		},
 		async addToCart(product: Product) {
-			if (!product) return;
+			if (!product || product.stock === 0) return;
 
 			this.loading[product.id] = true;
 			this.message[product.id] = "";
+			this.messageType[product.id] = "";
 
 			try {
 				const csrfToken = this.getCsrfToken();
@@ -130,12 +131,14 @@ export default defineComponent({
 				);
 
 				this.message[product.id] = "Product added to cart successfully!";
+				this.messageType[product.id] = "alert-success";
 				setTimeout(() => {
 					this.message[product.id] = "";
 				}, 3000);
 			} catch (error) {
 				console.error("Error adding to cart:", error);
 				this.message[product.id] = "Failed to add product to cart";
+				this.messageType[product.id] = "alert-danger";
 			} finally {
 				this.loading[product.id] = false;
 			}
@@ -167,5 +170,13 @@ export default defineComponent({
 	padding: 0.5rem 1rem;
 	font-size: 0.9rem;
 	margin-top: 0.5rem;
+}
+
+.quantity-display {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	border: 1px solid #ced4da;
 }
 </style>
