@@ -11,7 +11,7 @@ import PaymentPage from "@/views/PaymentPage.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        name: "",
+        name: "ProductPage",
         component: ProductPage,
     },
     {

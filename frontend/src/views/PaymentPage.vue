@@ -8,54 +8,43 @@
 							<h2 class="text-center">Pay Invoice</h2>
 						</div>
 						<hr />
-						<form action="" method="post" novalidate="novalidate">
+						<form @submit.prevent="handlePayment" method="post" novalidate="novalidate">
 							<input type="hidden" id="x_first_name" name="x_first_name" value="" />
 							<input type="hidden" id="x_last_name" name="x_last_name" value="" />
 							<input type="hidden" id="x_card_num" name="x_card_num" value="" />
 							<input type="hidden" id="x_exp_date" name="x_exp_date" value="" />
+
 							<div class="form-group">
 								<label>Payment amount</label>
 								<h2>${{ total.toFixed(2) }}</h2>
 							</div>
-							<div class="form-group has-success">
+
+							<div v-if="error" class="alert alert-danger">{{ error }}</div>
+
+							<div class="form-group">
 								<label for="cc-name" class="control-label">Name on card</label>
 								<input
 									id="cc-name"
 									name="cc-name"
 									type="text"
-									class="form-control cc-name valid"
-									data-val="true"
-									data-val-required="Please enter the name on card"
+									class="form-control cc-name"
 									autocomplete="cc-name"
-									aria-required="true"
-									aria-invalid="false"
-									aria-describedby="cc-name-error"
+									v-model="nameOnCard"
 								/>
-								<span
-									class="help-block field-validation-valid"
-									data-valmsg-for="cc-name"
-									data-valmsg-replace="true"
-								></span>
 							</div>
+
 							<div class="form-group">
 								<label for="cc-number" class="control-label">Card number</label>
 								<input
 									id="cc-number"
 									name="cc-number"
 									type="tel"
-									class="form-control cc-number identified visa"
-									value=""
-									data-val="true"
-									data-val-required="Please enter the card number"
-									data-val-cc-number="Please enter a valid card number"
+									class="form-control cc-number"
 									autocomplete="cc-number"
+									v-model="cardNumber"
 								/>
-								<span
-									class="help-block"
-									data-valmsg-for="cc-number"
-									data-valmsg-replace="true"
-								></span>
 							</div>
+
 							<div class="row">
 								<div class="col-6">
 									<div class="form-group">
@@ -65,18 +54,10 @@
 											name="cc-exp"
 											type="tel"
 											class="form-control cc-exp"
-											value=""
-											data-val="true"
-											data-val-required="Please enter the card expiration"
-											data-val-cc-exp="Please enter a valid month and year"
 											placeholder="MM / YY"
 											autocomplete="cc-exp"
+											v-model="cardExpiry"
 										/>
-										<span
-											class="help-block"
-											data-valmsg-for="cc-exp"
-											data-valmsg-replace="true"
-										></span>
 									</div>
 								</div>
 								<div class="col-6">
@@ -87,11 +68,8 @@
 											name="x_card_code"
 											type="tel"
 											class="form-control cc-cvc"
-											value=""
-											data-val="true"
-											data-val-required="Please enter the security code"
-											data-val-cc-cvc="Please enter a valid security code"
 											autocomplete="off"
+											v-model="cardCvc"
 										/>
 										<div class="input-group-addon">
 											<span
@@ -107,11 +85,26 @@
 									</div>
 								</div>
 							</div>
+
 							<div>
-								<button id="payment-button" type="submit" class="btn btn-lg btn-success btn-block">
+								<button
+									id="payment-button"
+									type="submit"
+									class="btn btn-lg btn-success btn-block"
+									:disabled="isProcessing"
+								>
 									<i class="fa fa-lock fa-lg"></i>&nbsp;
-									<span id="payment-button-amount">Pay ${{ total.toFixed(2) }}</span>
-									<span id="payment-button-sending" style="display: none">Sending…</span>
+									<span id="payment-button-amount" v-if="!isProcessing"
+										>Pay ${{ total.toFixed(2) }}</span
+									>
+									<span id="payment-button-sending" v-else>
+										<span
+											class="spinner-border spinner-border-sm"
+											role="status"
+											aria-hidden="true"
+										></span>
+										Processing...
+									</span>
 								</button>
 							</div>
 						</form>
@@ -126,20 +119,24 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
 import api from "@/utils/api";
 import { CartItem } from "@/types/cartitem";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
 export default defineComponent({
 	name: "PaymentPage",
 	setup() {
+		const router = useRouter();
 		const loading = ref(true);
+		const isProcessing = ref(false);
 		const cartItems = ref<CartItem[]>([]);
 		const shipping = ref(5.99);
 		const taxRate = 0.008;
 		const error = ref<string | null>(null);
-		const email = ref("");
-		const username = ref("");
-		const password = ref("");
 
-		const router = useRouter();
+		const nameOnCard = ref("");
+		const cardNumber = ref("");
+		const cardExpiry = ref("");
+		const cardCvc = ref("");
 
 		const subtotal = computed(() => {
 			return cartItems.value.reduce((total: number, item: CartItem) => {
@@ -161,7 +158,6 @@ export default defineComponent({
 			try {
 				const response = await api.get("/api/cart/");
 				cartItems.value = response.data.items || [];
-				console.log("Cart Items:", cartItems.value);
 			} catch (err) {
 				error.value = "Failed to load cart items. Please try again.";
 				console.error("Error fetching cart items:", err);
@@ -169,7 +165,13 @@ export default defineComponent({
 				loading.value = false;
 			}
 		};
-		const handlepayment = async () => {
+
+		const handlePayment = async () => {
+			if (isProcessing.value) return;
+
+			error.value = null;
+			isProcessing.value = true;
+
 			try {
 				const csrfToken = document.cookie
 					.split("; ")
@@ -181,11 +183,13 @@ export default defineComponent({
 				}
 
 				const response = await api.post(
-					"/api/auth/register/",
+					"/api/cart/payment/",
 					{
-						email: email.value,
-						username: username.value,
-						password: password.value,
+						name_on_card: nameOnCard.value,
+						card_number: cardNumber.value,
+						card_expiry: cardExpiry.value,
+						card_cvc: cardCvc.value,
+						amount: total.value,
 					},
 					{
 						headers: {
@@ -195,16 +199,19 @@ export default defineComponent({
 				);
 
 				if (response.data.message) {
-					router.push("/login");
+					router.push("/");
 				}
 			} catch (err) {
 				if (axios.isAxiosError(err)) {
-					error.value = err.response?.data?.error || "Registration failed. Please try again.";
+					error.value = err.response?.data?.error || "Payment failed. Please try again.";
 				} else if (err instanceof Error) {
 					error.value = err.message;
 				} else {
 					error.value = "An unexpected error occurred.";
 				}
+				console.error("Payment error:", err);
+			} finally {
+				isProcessing.value = false;
 			}
 		};
 
@@ -214,13 +221,28 @@ export default defineComponent({
 
 		return {
 			loading,
+			isProcessing,
 			cartItems,
 			subtotal,
 			shipping,
 			tax,
 			total,
 			error,
+			nameOnCard,
+			cardNumber,
+			cardExpiry,
+			cardCvc,
+			handlePayment,
 		};
 	},
 });
 </script>
+
+<style scoped>
+#payment-button {
+	position: relative;
+}
+#payment-button:disabled {
+	opacity: 0.8;
+}
+</style>
