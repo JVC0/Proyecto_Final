@@ -1,15 +1,15 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
-import uuid
 
 
 class Profile(models.Model):
-
     avatar = models.ImageField(
         blank=True,
         null=True,
         upload_to="avatars",
-        default="avatars/noavatar.jpg",
+        default="avatars/default.jpg",
     )
     bio = models.TextField(blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

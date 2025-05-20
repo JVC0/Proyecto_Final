@@ -65,3 +65,22 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return JsonResponse({"success": "Logged out"})
+
+
+def verify_email(token):
+    if not token:
+        return JsonResponse({"error": "Token is required"}, status=400)
+
+    try:
+        token_obj = Token.objects.get(key=token)
+        token_obj.is_email_verified = True
+        token_obj.save()
+        return JsonResponse({"success": "Email verified successfully"})
+    except Token.DoesNotExist:
+        return JsonResponse({"error": "Invalid token"}, status=400)
+
+
+def resend_verification_email(request):
+    base_url = request.build_absolute_uri("/")
+    send_verification_email.delay(base_url, request.user)
+    return JsonResponse({"success": "Verification email resent"})
