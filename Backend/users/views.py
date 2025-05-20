@@ -4,7 +4,7 @@ from .serializers import ProfileSerializer
 from products.serializers import ProductGroupSerializer
 from products.models import ProductGroup
 from shared.serializers import JsonResponse
-
+import json
 
 def user_profile(request, username):
     user = User.objects.get(username=username)
@@ -34,3 +34,22 @@ def group_detail(request, username, group_pk):
     p_group = ProductGroup.objects.get(pk=group_pk)
     serializer = ProductGroupSerializer(p_group, request=request)
     return serializer.json_response()
+
+
+def add_groups(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            name = data.get("name")
+            products = data.get("products")
+            user = data.get("username")
+
+            group = ProductGroup.objects.create_user(
+                name=name, products=products, user=user
+            )
+            group.save()
+
+            return JsonResponse({"message": "Group created successfully"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
