@@ -13,14 +13,6 @@
 							<input type="hidden" id="x_last_name" name="x_last_name" value="" />
 							<input type="hidden" id="x_card_num" name="x_card_num" value="" />
 							<input type="hidden" id="x_exp_date" name="x_exp_date" value="" />
-							<div class="form-group text-center">
-								<ul class="list-inline">
-									<li class="list-inline-item"><i class="text-muted fa fa-cc-visa fa-2x"></i></li>
-									<li class="list-inline-item"><i class="fa fa-cc-mastercard fa-2x"></i></li>
-									<li class="list-inline-item"><i class="fa fa-cc-amex fa-2x"></i></li>
-									<li class="list-inline-item"><i class="fa fa-cc-discover fa-2x"></i></li>
-								</ul>
-							</div>
 							<div class="form-group">
 								<label>Payment amount</label>
 								<h2>${{ total.toFixed(2) }}</h2>
@@ -115,20 +107,6 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="x_zip" class="control-label">Postal code</label>
-								<input
-									id="x_zip"
-									name="x_zip"
-									type="text"
-									class="form-control"
-									value=""
-									data-val="true"
-									data-val-required="Please enter the ZIP/Postal code"
-									autocomplete="postal-code"
-								/>
-								<span class="help-block" data-valmsg-for="x_zip" data-valmsg-replace="true"></span>
-							</div>
 							<div>
 								<button id="payment-button" type="submit" class="btn btn-lg btn-success btn-block">
 									<i class="fa fa-lock fa-lg"></i>&nbsp;
@@ -157,6 +135,11 @@ export default defineComponent({
 		const shipping = ref(5.99);
 		const taxRate = 0.008;
 		const error = ref<string | null>(null);
+		const email = ref("");
+		const username = ref("");
+		const password = ref("");
+
+		const router = useRouter();
 
 		const subtotal = computed(() => {
 			return cartItems.value.reduce((total: number, item: CartItem) => {
@@ -184,6 +167,44 @@ export default defineComponent({
 				console.error("Error fetching cart items:", err);
 			} finally {
 				loading.value = false;
+			}
+		};
+		const handlepayment = async () => {
+			try {
+				const csrfToken = document.cookie
+					.split("; ")
+					.find((row) => row.startsWith("csrftoken="))
+					?.split("=")[1];
+
+				if (!csrfToken) {
+					throw new Error("CSRF token not found.");
+				}
+
+				const response = await api.post(
+					"/api/auth/register/",
+					{
+						email: email.value,
+						username: username.value,
+						password: password.value,
+					},
+					{
+						headers: {
+							"X-CSRFToken": csrfToken,
+						},
+					}
+				);
+
+				if (response.data.message) {
+					router.push("/login");
+				}
+			} catch (err) {
+				if (axios.isAxiosError(err)) {
+					error.value = err.response?.data?.error || "Registration failed. Please try again.";
+				} else if (err instanceof Error) {
+					error.value = err.message;
+				} else {
+					error.value = "An unexpected error occurred.";
+				}
 			}
 		};
 

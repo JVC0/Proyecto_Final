@@ -13,7 +13,6 @@ from .serializers import CartSerializer
 @ensure_csrf_cookie
 def add_to_cart(request, product_id):
     product = Product.objects.get(id=product_id)
-    print(request)
     data = json.loads(request.body)
     quantity = data.get("quantity")
     cart, _ = Cart.objects.get_or_create(profile=request.user.profile)
@@ -31,14 +30,24 @@ def add_to_cart(request, product_id):
 
 @ensure_csrf_cookie
 def remove_from_cart(request, product_id):
-    product = Product.objects.get(id=product_id)
     cart = get_object_or_404(Cart, profile=request.user.profile)
-    cart_item = get_object_or_404(CartItem, cart=cart, product=product)
+    cart_item = get_object_or_404(CartItem, cart=cart, id=product_id)
     cart_item.delete()
-    return JsonResponse({"message": f"Removed {product.name} from your cart"})
+    return JsonResponse({"message": "item has been deleted"})
 
 
 def cart_detail(request):
     cart = get_object_or_404(Cart, profile=request.user.profile)
     serializer = CartSerializer(cart, request=request)
     return serializer.json_response()
+
+
+def payment(request):
+    cart = Cart.objects.get(profile=request.user.profile)
+    cart_items = CartItem.objects.filter(cart=cart)
+    for cart_item in cart_items:
+        product = Product.objects.get(name=cart_item.product)
+        product.stock -= cart_item.quantity
+        product.save()
+        cart_item.delete()
+    return JsonResponse({"message": "Payment successful"})

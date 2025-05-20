@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Cart(models.Model):
     profile = models.ForeignKey(
@@ -29,4 +27,4 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.quantity} of {self.product} in {self.cart}"
+        return f"{self.quantity} of {self.product}"
