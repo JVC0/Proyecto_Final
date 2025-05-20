@@ -43,6 +43,11 @@ const routes: Array<RouteRecordRaw> = [
         name: "GroupPage",
         component: GroupPage,
     },
+    {
+        path: "/Profile/:username/groups/:id",
+        name: "GroupDetail",
+        component: GroupDetail,
+    }
 ];
 
 const router = createRouter({
