@@ -27,7 +27,6 @@ def user_register(request):
 
 
 @check_method("POST")
-@invalid_json_body("unsername", "password")
 def user_login(request):
     data = json.loads(request.body)
     username = data.get("username")
