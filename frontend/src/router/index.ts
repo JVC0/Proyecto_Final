@@ -7,6 +7,7 @@ import ProductDetail from "@/views/ProductDetail.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import GroupPage from "@/views/GroupPage.vue"
 import GroupDetail from "@/views/GroupDetail.vue";
+import AddGroup from "@/views/AddGroup.vue"
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -47,7 +48,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Profile/:username/groups/:id",
         name: "GroupDetail",
         component: GroupDetail,
-    }
+    },
+    {
+        path: "/Profile/:username/groups/add",
+        name: "AddGroup",
+        component: AddGroup,
+    },
 ];
 
 const router = createRouter({
