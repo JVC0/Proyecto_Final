@@ -48,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Profile/:username/groups/:id",
         name: "GroupDetail",
         component: GroupDetail,
-    }
+    },
     {
     path: "/Cart/payment",
         name: "PaymentPage",

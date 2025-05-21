@@ -1,6 +1,9 @@
-from django.http import JsonResponse
-from users.models import Token
+import json
 import re
+
+from django.http import JsonResponse
+
+from users.models import Token
 
 
 def check_method(method):
@@ -31,3 +34,23 @@ def token_checker(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+def invalid_json_body(*required_fields):
+    def decorator(func):
+        def wrapper(request, *args, **kwargs):
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid JSON data"}, status=400)
+            missing_fields = [field for field in required_fields if field not in data]
+            if missing_fields:
+                return JsonResponse(
+                    {"error": f"Missing required fields: {', '.join(missing_fields)}"},
+                    status=400,
+                )
+            return func(request, *args, **kwargs)
+
+        return wrapper
+
+    return decorator

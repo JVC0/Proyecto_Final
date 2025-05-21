@@ -69,6 +69,7 @@ export default {
 				}
 			} catch (err) {
 				if (axios.isAxiosError(err)) {
+					console.log(err);
 					error.value = err.response?.data?.error || "Registration failed. Please try again.";
 				} else if (err instanceof Error) {
 					error.value = err.message;
