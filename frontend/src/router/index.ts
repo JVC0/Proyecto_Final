@@ -7,11 +7,12 @@ import ProductDetail from "@/views/ProductDetail.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import GroupPage from "@/views/GroupPage.vue"
 import GroupDetail from "@/views/GroupDetail.vue";
+import PaymentPage from "@/views/PaymentPage.vue";
 import AddGroup from "@/views/AddGroup.vue"
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        name: "",
+        name: "ProductPage",
         component: ProductPage,
     },
     {
@@ -48,6 +49,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Profile/:username/groups/:id",
         name: "GroupDetail",
         component: GroupDetail,
+    },
+    {
+    path: "/Cart/payment",
+        name: "PaymentPage",
+        component: PaymentPage,
+    },
     },
     {
         path: "/Profile/:username/groups/add",

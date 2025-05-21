@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     "comments.apps.CommentsConfig",
     "recipes.apps.RecipesConfig",
     "corsheaders",
+    "django_rq",
+    "accounts.apps.AccountsConfig",
+    "carts.apps.CartsConfig",
 ]
 
 MIDDLEWARE = [
