@@ -21,14 +21,13 @@
 			</p>
 		</div>
 	</form>
-	<p v-if="error" class="error">{{ error }}</p>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import { useMessageStore } from "@/stores/message"; // Assuming you have a message store
 
 export default {
 	name: "RegisterPage",
@@ -36,8 +35,8 @@ export default {
 		const email = ref("");
 		const username = ref("");
 		const password = ref("");
-		const error = ref("");
 		const router = useRouter();
+		const messageStore = useMessageStore(); // Using centralized message store
 
 		const handleRegister = async () => {
 			try {
@@ -45,10 +44,6 @@ export default {
 					.split("; ")
 					.find((row) => row.startsWith("csrftoken="))
 					?.split("=")[1];
-
-				if (!csrfToken) {
-					throw new Error("CSRF token not found.");
-				}
 
 				const response = await api.post(
 					"/api/auth/register/",
@@ -64,17 +59,17 @@ export default {
 					}
 				);
 
-				if (response.data.message) {
+				if (response.data.success) {
+					messageStore.setMessage(response.data.message || "Registration successful!");
 					router.push("/login");
+				} else if (response.data.message) {
+					messageStore.setMessage(response.data.message);
 				}
-			} catch (err) {
-				if (axios.isAxiosError(err)) {
-					console.log(err);
-					error.value = err.response?.data?.error || "Registration failed. Please try again.";
-				} else if (err instanceof Error) {
-					error.value = err.message;
+			} catch (error: any) {
+				if (error.response?.data?.message) {
+					messageStore.setMessage(error.response.data.message);
 				} else {
-					error.value = "An unexpected error occurred.";
+					messageStore.setMessage("Registration failed. Please try again.");
 				}
 			}
 		};
@@ -83,7 +78,6 @@ export default {
 			email,
 			username,
 			password,
-			error,
 			handleRegister,
 		};
 	},

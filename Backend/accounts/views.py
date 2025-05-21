@@ -9,6 +9,8 @@ from accounts.tasks import send_verification_email
 from shared.decorators import check_method, invalid_json_body
 from users.models import Profile, Token
 
+from .decorators import handle_auth_errors
+
 
 @check_method("POST")
 @ensure_csrf_cookie
@@ -27,6 +29,7 @@ def user_register(request):
 
 
 @check_method("POST")
+@handle_auth_errors
 def user_login(request):
     data = json.loads(request.body)
     username = data.get("username")
@@ -37,6 +40,7 @@ def user_login(request):
         login(request, user)
         return JsonResponse(
             {
+                "message": "Login successful",
                 "user": {
                     "id": user.id,
                     "username": user.username,
@@ -45,6 +49,8 @@ def user_login(request):
                 "token": str(token.key),
             }
         )
+    else:
+        return JsonResponse({"message": "Invalid credentials"}, status=400)
 
 
 @check_method("GET")

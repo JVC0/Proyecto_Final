@@ -51,11 +51,7 @@ const password = ref("");
 const authStore = useAuthStore();
 
 const handleLogin = async () => {
-	try {
-		await authStore.login(username.value, password.value);
-	} catch (error) {
-		console.error("Login failed:", error);
-	}
+	await authStore.login(username.value, password.value);
 };
 </script>
 <style>
