@@ -29,7 +29,10 @@ class Product(models.Model):
 class ProductGroup(models.Model):
     name = models.CharField(max_length=100)
     products = models.ManyToManyField(
-        "products.Product", related_name="productgroups", blank=True
+        "products.Product",
+        related_name="productgroups",
+        blank=True,
+        through='ProductGroupItem',
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -40,3 +43,11 @@ class ProductGroup(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProductGroupItem(models.Model):
+    productgroup = models.ForeignKey(ProductGroup, on_delete=models.CASCADE, related_name="productgroupitems")
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.product}"
