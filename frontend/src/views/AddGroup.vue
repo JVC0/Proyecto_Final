@@ -132,9 +132,6 @@ export default {
                 api.get("/api/products/")
                         .then((response) => {
                                 this.products = response.data;
-                                this.products.forEach(product => {
-                                        this.quantities[product.id] = 1;
-                                });
                         })
                         .catch((error) => {
                                 console.log(error);
