@@ -8,7 +8,7 @@
 							<h2 class="text-center">Pay Invoice</h2>
 						</div>
 						<hr />
-						<form @submit.prevent="handlePayment" method="post" novalidate="novalidate">
+						<form @submit.prevent="handlePayment" method="post">
 							<input type="hidden" id="x_first_name" name="x_first_name" value="" />
 							<input type="hidden" id="x_last_name" name="x_last_name" value="" />
 							<input type="hidden" id="x_card_num" name="x_card_num" value="" />

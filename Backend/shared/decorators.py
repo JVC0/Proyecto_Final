@@ -24,12 +24,12 @@ def token_checker(func):
         token = request.headers.get("Authorization")
         clean_token = re.fullmatch(PATTERN, token)
         if not clean_token:
-            return JsonResponse({"error": "Invalid authentication token"}, status=400)
+            return JsonResponse({"message": "Invalid authentication token"}, status=400)
         try:
             Token.objects.get(key=clean_token["token"])
         except Token.DoesNotExist:
             return JsonResponse(
-                {"error": "Unregistered authentication token"}, status=401
+                {"message": "Unregistered authentication token"}, status=401
             )
         return func(request, *args, **kwargs)
 

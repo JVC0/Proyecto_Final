@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
-
+import { useMessageStore } from '@/stores/message';
 interface User {
     id: number;
     username: string;
@@ -39,23 +39,34 @@ export const useAuthStore = defineStore("auth", () => {
         return response;
     };
 
+
+
     const login = async (username: string, password: string) => {
+        const messageStore = useMessageStore();
+
         try {
-            const response = await makeAuthenticatedRequest(
-                "/api/auth/login/",
-                {
-                    username,
-                    password,
+            const response = await makeAuthenticatedRequest("/api/auth/login/", {
+                username,
+                password
+            });
+            if (response.status === 200) {
+                token.value = response.data.token;
+                user.value = response.data.user;
+                localStorage.setItem("token", token.value || "");
+                localStorage.setItem("user", JSON.stringify(user.value));
+
+                if (response.data.message) {
+                    messageStore.setMessage(response.data.message);
                 }
-            );
-            token.value = response.data.token;
-            user.value = response.data.user;
-            localStorage.setItem("token", token.value || "");
-            localStorage.setItem("user", JSON.stringify(user.value));
-            router.push("/");
-        } catch (error) {
-            console.error("Login failed", error);
-            throw error;
+                router.push("/");
+                return;
+            }
+        } catch (error: any) {
+            if (error.response?.data?.message) {
+                messageStore.setMessage(error.response.data.message, true);
+            } else {
+                messageStore.setMessage("Login failed. Please try again.");
+            }
         }
     };
 
