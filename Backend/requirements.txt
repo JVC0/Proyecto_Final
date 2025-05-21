@@ -1,3 +1,7 @@
 django
 pillow
-corsheaders
+django-cors-headers
+django-rq
+prettyconf
+django-redis
+rq
