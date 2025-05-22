@@ -8,6 +8,7 @@ import ProfilePage from "@/views/ProfilePage.vue";
 import GroupPage from "@/views/GroupPage.vue"
 import GroupDetail from "@/views/GroupDetail.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
+import AddGroup from "@/views/AddGroup.vue"
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -53,6 +54,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/Cart/payment",
         name: "PaymentPage",
         component: PaymentPage,
+    },
+    {
+        path: "/Profile/:username/groups/add",
+        name: "AddGroup",
+        component: AddGroup,
     },
 ];
 

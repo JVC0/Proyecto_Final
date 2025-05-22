@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Product, ProductGroup
+from .models import Product, ProductGroup, ProductGroupItem
 
 
-from django.contrib import admin
-from .models import Product, ProductGroup
-
+class ProductGroupItemInline(admin.TabularInline):
+    model = ProductGroupItem
+    fields = ("product",)
+    readonly_fields = ()
 
 @admin.register(Product)
 class ProductsAdmin(admin.ModelAdmin):
@@ -15,4 +16,10 @@ class ProductsAdmin(admin.ModelAdmin):
 @admin.register(ProductGroup)
 class ProductGroupAdmin(admin.ModelAdmin):
     list_display = ("name", )
-    filter_horizontal = ("products",)
+    inlines = [ProductGroupItemInline]
+
+
+@admin.register(ProductGroupItem)
+class ProductGroupItemAdmin(admin.ModelAdmin):
+    list_display = ("product",)
+    filter_horizontal = ()
