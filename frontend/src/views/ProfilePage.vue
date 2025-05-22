@@ -1,77 +1,122 @@
 <template>
-	<div v-if="profile">
-		<div class="profile_content">
-			<img :src="profile.avatar" class="profile_avatar" alt="avatar" />
-			<br />
-			<div class="profile_username">
-				<span
-					><h1>{{ profile.user.username }}</h1></span
-				>
-			</div>
-			<br />
-			<div class="profile_fullname">{{ profile.user.first_name }} {{ profile.user.last_name }}</div>
-			<br />
-			<div class="profile_email">
-				<span>{{ profile.user.email }}</span>
-			</div>
-			<div class="profile_bio">
-				<span>Bio: {{ profile.bio }}</span>
-			</div>
-			<br />
-			<div class="row">
-				<router-link
-					class="btn btn-primary col-6"
-					:to="{ name: 'GroupPage', params: { username: profile.user.username } }"
-				>
-					Ver Grupos</router-link
-				>
-				<br />
-				<router-link
-					class="btn btn-primary add_button col-6"
-					:to="{ name: 'EditProfilePage', params: { username: route.params.username } }"
-				>
-					Editar perfil</router-link
-				>
-			</div>
-			<div class="row mt-3">
-				<button class="btn btn-danger col-12" @click="showDeleteModal = true">
-					Eliminar perfil
-				</button>
-			</div>
-		</div>
-		<div v-if="showDeleteModal" class="modal-overlay">
-			<div class="modal-content">
-				<h3>Confirmar eliminación</h3>
-				<p>
-					¿Estás seguro de que quieres eliminar tu perfil permanentemente? Esta acción no se puede
-					deshacer.
-				</p>
+  <div v-if="profile" role="main" aria-live="polite">
+    <div class="profile_content">
+      <img 
+        :src="profile.avatar" 
+        class="profile_avatar" 
+        role="img"
+        :alt="`User avatar for ${profile.user.username}`"
+        aria-labelledby="username"
+      >
+      <br aria-hidden="true">
+      
+      <div class="profile_username" id="username">
+        <h1 tabindex="0">{{ profile.user.username }}</h1>
+      </div>
+      <br aria-hidden="true">
+      
+      <div class="profile_fullname" aria-label="Full name">
+        {{ profile.user.first_name }} {{ profile.user.last_name }}
+      </div>
+      <br aria-hidden="true">
+      
+      <div class="profile_email" aria-label="Email address">
+        <span>{{ profile.user.email }}</span>
+      </div>
+      
+      <div class="profile_bio" aria-label="Biography">
+        <span>Bio: {{ profile.bio }}</span>
+      </div>
+      <br aria-hidden="true">
+      
+      <div class="row" role="navigation" aria-label="Profile actions">
+        <router-link
+          class="btn btn-primary col-5 custom_btn"
+          role="button"
+          :aria-label="`View groups created by ${profile.user.username}`"
+          :to="{ name: 'GroupPage', params: { username: profile.user.username } }"
+        >
+          View Groups
+        </router-link>
+        
+        <div class="col-2" aria-hidden="true"></div>
+        
+        <router-link
+          class="btn btn-primary add_button col-5 custom_btn"
+          role="button"
+          :aria-label="`Edit profile for ${profile.user.username}`"
+          :to="{ name: 'EditProfilePage', params: { username: route.params.username } }"
+        >
+          Edit Profile
+        </router-link>
+      </div>
+      
+      <div class="row mt-3">
+        <button 
+          class="btn btn-danger col-12 custom_btn"
+          aria-label="Delete profile"
+          @click="showDeleteModal = true"
+        >
+          Delete Profile
+        </button>
+      </div>
+    </div>
 
-				<p>Para confirmar, escribe tu nombre de usuario:</p>
-				<input
-					v-model="confirmationText"
-					type="text"
-					:placeholder="'Escribe ' + profile.user.username"
-					class="form-control mb-3"
-				/>
+    <div 
+      v-if="showDeleteModal" 
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dialogHeading"
+    >
+      <div class="modal-content">
+        <h3 id="dialogHeading" tabindex="0">Confirm action</h3>
+        <p aria-live="assertive">
+          Are you sure you want to permanently delete your profile? This action cannot be undone.
+        </p>
 
-				<div class="modal-buttons">
-					<button
-						class="btn btn-danger"
-						@click="deleteProfile"
-						:disabled="confirmationText !== profile.user.username"
-					>
-						Eliminar permanentemente
-					</button>
-					<button class="btn btn-secondary" @click="showDeleteModal = false">Cancelar</button>
-				</div>
+        <p id="confirmationInstruction">
+          To confirm, please write your username: 
+        </p>
+        <input
+          v-model="confirmationText"
+          type="text"
+          :placeholder="'Write ' + profile.user.username"
+          class="form-control mb-3"
+          aria-labelledby="confirmationInstruction"
+          aria-required="true"
+        >
 
-				<div v-if="deleteMessage" class="alert mt-3" :class="deleteMessageClass">
-					{{ deleteMessage }}
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="modal-buttons" role="group" aria-label="Confirmation buttons">
+          <button
+            class="btn btn-danger"
+            @click="deleteProfile"
+            :disabled="confirmationText !== profile.user.username"
+            aria-describedby="confirmationError"
+          >
+            Delete
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            @click="showDeleteModal = false"
+            aria-label="Cancel profile deletion"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <div 
+          v-if="deleteMessage" 
+          role="alert"
+          aria-live="assertive"
+          class="alert mt-3" 
+          :class="deleteMessageClass"
+        >
+          {{ deleteMessage }}
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -169,6 +214,8 @@ export default defineComponent({
 
 .profile_avatar {
 	border-radius: 50%;
+	height: 300px;
+	width: 300px;
 }
 
 .profile_email {
