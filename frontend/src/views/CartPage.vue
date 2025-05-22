@@ -9,7 +9,7 @@
 		<div v-else class="row">
 			<div class="col-lg-8">
 				<!-- Cart Items -->
-				<div class="card mb-4">
+				<div class="card custom-card mb-4">
 					<div class="card-body">
 						<div v-for="(item, index) in cartItems" :key="item.id" class="row cart-item mb-3">
 							<div class="col-md-3 mb-2">
@@ -34,7 +34,7 @@
 				</div>
 				<!-- Continue Shopping Button -->
 				<div class="text-start mb-4">
-					<router-link class="btn btn-outline-primary" to="/">
+					<router-link class="btn btn-primary" to="/">
 						<i class="bi bi-arrow-left me-2"></i>Continue Shopping
 					</router-link>
 				</div>
@@ -168,5 +168,8 @@ export default defineComponent({
 .cart-summary {
 	background-color: #f8f9fa;
 	border-radius: 10px;
+}
+.custom-card {
+	width: 100%;
 }
 </style>

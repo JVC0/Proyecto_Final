@@ -27,7 +27,7 @@
 import { ref } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
-import { useMessageStore } from "@/stores/message"; // Assuming you have a message store
+import { useMessageStore } from "@/stores/message";
 
 export default {
 	name: "RegisterPage",
@@ -36,7 +36,7 @@ export default {
 		const username = ref("");
 		const password = ref("");
 		const router = useRouter();
-		const messageStore = useMessageStore(); // Using centralized message store
+		const messageStore = useMessageStore();
 
 		const handleRegister = async () => {
 			try {

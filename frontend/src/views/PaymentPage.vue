@@ -9,17 +9,15 @@
 						</div>
 						<hr />
 						<form @submit.prevent="handlePayment" method="post">
-							<input type="hidden" id="x_first_name" name="x_first_name" value="" />
-							<input type="hidden" id="x_last_name" name="x_last_name" value="" />
-							<input type="hidden" id="x_card_num" name="x_card_num" value="" />
-							<input type="hidden" id="x_exp_date" name="x_exp_date" value="" />
+							<input type="hidden" id="x_first_name" required name="x_first_name" value="" />
+							<input type="hidden" id="x_last_name" required name="x_last_name" value="" />
+							<input type="hidden" id="x_card_num" required name="x_card_num" value="" />
+							<input type="hidden" id="x_exp_date" required name="x_exp_date" value="" />
 
 							<div class="form-group">
 								<label>Payment amount</label>
 								<h2>${{ total.toFixed(2) }}</h2>
 							</div>
-
-							<div v-if="error" class="alert alert-danger">{{ error }}</div>
 
 							<div class="form-group">
 								<label for="cc-name" class="control-label">Name on card</label>
@@ -28,8 +26,10 @@
 									name="cc-name"
 									type="text"
 									class="form-control cc-name"
+									:class="{ 'is-invalid': errors.nameOnCard }"
 									autocomplete="cc-name"
 									v-model="nameOnCard"
+									required
 								/>
 							</div>
 
@@ -40,9 +40,15 @@
 									name="cc-number"
 									type="tel"
 									class="form-control cc-number"
+									:class="{ 'is-invalid': errors.cardNumber }"
 									autocomplete="cc-number"
 									v-model="cardNumber"
+									@input="formatCardNumber"
+									required
 								/>
+								<div v-if="errors.cardNumber" class="invalid-feedback">
+									{{ errors.cardNumber }}
+								</div>
 							</div>
 
 							<div class="row">
@@ -54,10 +60,16 @@
 											name="cc-exp"
 											type="tel"
 											class="form-control cc-exp"
+											:class="{ 'is-invalid': errors.cardExpiry }"
 											placeholder="MM / YY"
 											autocomplete="cc-exp"
 											v-model="cardExpiry"
+											@input="formatExpiry"
+											required
 										/>
+										<div v-if="errors.cardExpiry" class="invalid-feedback">
+											{{ errors.cardExpiry }}
+										</div>
 									</div>
 								</div>
 								<div class="col-6">
@@ -68,8 +80,12 @@
 											name="x_card_code"
 											type="tel"
 											class="form-control cc-cvc"
+											:class="{ 'is-invalid': errors.cardCvc }"
 											autocomplete="off"
 											v-model="cardCvc"
+											@input="limitCvcLength"
+											maxlength="3"
+											required
 										/>
 										<div class="input-group-addon">
 											<span
@@ -82,10 +98,12 @@
 												data-trigger="hover"
 											></span>
 										</div>
+										<div v-if="errors.cardCvc" class="invalid-feedback">
+											{{ errors.cardCvc }}
+										</div>
 									</div>
 								</div>
 							</div>
-
 							<div>
 								<button
 									id="payment-button"
@@ -120,23 +138,74 @@ import { defineComponent, ref, computed, onMounted } from "vue";
 import api from "@/utils/api";
 import { CartItem } from "@/types/cartitem";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import { useMessageStore } from "@/stores/message";
 
 export default defineComponent({
 	name: "PaymentPage",
 	setup() {
 		const router = useRouter();
+		const messageStore = useMessageStore();
 		const loading = ref(true);
 		const isProcessing = ref(false);
 		const cartItems = ref<CartItem[]>([]);
 		const shipping = ref(5.99);
 		const taxRate = 0.008;
-		const error = ref<string | null>(null);
 
 		const nameOnCard = ref("");
 		const cardNumber = ref("");
 		const cardExpiry = ref("");
 		const cardCvc = ref("");
+
+		const errors = ref({
+			nameOnCard: "",
+			cardNumber: "",
+			cardExpiry: "",
+			cardCvc: "",
+		});
+
+		const clearErrors = () => {
+			errors.value = {
+				nameOnCard: "",
+				cardNumber: "",
+				cardExpiry: "",
+				cardCvc: "",
+			};
+		};
+
+		const formatExpiry = (e: Event) => {
+			const input = e.target as HTMLInputElement;
+			let value = input.value.replace(/\D/g, "");
+
+			if (value.length > 2) {
+				value = value.substring(0, 2) + "/" + value.substring(2, 4);
+			}
+
+			input.value = value;
+			cardExpiry.value = value;
+		};
+
+		const formatCardNumber = (e: Event) => {
+			const input = e.target as HTMLInputElement;
+			let value = input.value.replace(/\D/g, "");
+
+			if (value.length > 16) {
+				value = value.substring(0, 16);
+			}
+
+			const formattedValue = value.replace(/(\d{4})(?=\d)/g, "$1-");
+			input.value = formattedValue;
+			cardNumber.value = value;
+		};
+
+		const limitCvcLength = (e: Event) => {
+			const input = e.target as HTMLInputElement;
+			let value = input.value.replace(/\D/g, "");
+			if (value.length > 3) {
+				value = value.substring(0, 3);
+			}
+			input.value = value;
+			cardCvc.value = value;
+		};
 
 		const subtotal = computed(() => {
 			return cartItems.value.reduce((total: number, item: CartItem) => {
@@ -152,15 +221,47 @@ export default defineComponent({
 			return subtotal.value + tax.value + shipping.value;
 		});
 
+		const validateForm = () => {
+			let isValid = true;
+			clearErrors();
+
+			if (!nameOnCard.value.trim()) {
+				errors.value.nameOnCard = "Name on card is required";
+				isValid = false;
+			}
+
+			const rawCardNumber = cardNumber.value.replace(/\D/g, "");
+			if (!rawCardNumber || rawCardNumber.length !== 16) {
+				errors.value.cardNumber = "Please enter a valid 16-digit card number";
+				isValid = false;
+			}
+
+			const expParts = cardExpiry.value.split("/");
+			if (
+				!cardExpiry.value ||
+				expParts.length !== 2 ||
+				expParts[0].length !== 2 ||
+				expParts[1].length !== 2
+			) {
+				errors.value.cardExpiry = "Please enter a valid expiration date (MM/YY)";
+				isValid = false;
+			}
+
+			if (!cardCvc.value || cardCvc.value.length !== 3) {
+				errors.value.cardCvc = "Please enter a valid 3-digit security code";
+				isValid = false;
+			}
+
+			return isValid;
+		};
+
 		const fetchCartItems = async () => {
 			loading.value = true;
-			error.value = null;
 			try {
 				const response = await api.get("/api/cart/");
 				cartItems.value = response.data.items || [];
-			} catch (err) {
-				error.value = "Failed to load cart items. Please try again.";
-				console.error("Error fetching cart items:", err);
+			} catch (error: any) {
+				messageStore.setMessage(error.response?.data?.message || "Failed to load cart items", true);
 			} finally {
 				loading.value = false;
 			}
@@ -169,7 +270,16 @@ export default defineComponent({
 		const handlePayment = async () => {
 			if (isProcessing.value) return;
 
-			error.value = null;
+			if (!validateForm()) {
+				const errorMessages = Object.values(errors.value)
+					.filter((msg) => msg)
+					.join(". ");
+				if (errorMessages) {
+					messageStore.setMessage(errorMessages, true);
+				}
+				return;
+			}
+
 			isProcessing.value = true;
 
 			try {
@@ -178,18 +288,13 @@ export default defineComponent({
 					.find((row) => row.startsWith("csrftoken="))
 					?.split("=")[1];
 
-				if (!csrfToken) {
-					throw new Error("CSRF token not found.");
-				}
-
 				const response = await api.post(
 					"/api/cart/payment/",
 					{
+						card_number: cardNumber.value.replace(/\D/g, ""),
+						exp_date: cardExpiry.value.replace(/\D/g, ""),
+						cvc: cardCvc.value,
 						name_on_card: nameOnCard.value,
-						card_number: cardNumber.value,
-						card_expiry: cardExpiry.value,
-						card_cvc: cardCvc.value,
-						amount: total.value,
 					},
 					{
 						headers: {
@@ -198,18 +303,17 @@ export default defineComponent({
 					}
 				);
 
-				if (response.data.message) {
+				if (response.data.message === "Payment successful") {
+					messageStore.setMessage(response.data.message);
 					router.push("/");
-				}
-			} catch (err) {
-				if (axios.isAxiosError(err)) {
-					error.value = err.response?.data?.error || "Payment failed. Please try again.";
-				} else if (err instanceof Error) {
-					error.value = err.message;
 				} else {
-					error.value = "An unexpected error occurred.";
+					messageStore.setMessage(response.data.message, true);
 				}
-				console.error("Payment error:", err);
+			} catch (error: any) {
+				messageStore.setMessage(
+					error.response?.data?.message || "Payment failed. Please try again.",
+					true
+				);
 			} finally {
 				isProcessing.value = false;
 			}
@@ -227,11 +331,14 @@ export default defineComponent({
 			shipping,
 			tax,
 			total,
-			error,
 			nameOnCard,
 			cardNumber,
 			cardExpiry,
 			cardCvc,
+			errors,
+			formatExpiry,
+			formatCardNumber,
+			limitCvcLength,
 			handlePayment,
 		};
 	},
@@ -244,5 +351,9 @@ export default defineComponent({
 }
 #payment-button:disabled {
 	opacity: 0.8;
+}
+.alert-danger {
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 </style>
