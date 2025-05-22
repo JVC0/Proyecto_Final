@@ -65,7 +65,7 @@ export const useAuthStore = defineStore("auth", () => {
             if (error.response?.data?.message) {
                 messageStore.setMessage(error.response.data.message, true);
             } else {
-                messageStore.setMessage("Login failed. Please try again.");
+                messageStore.setMessage("Login failed. Please try again.", true);
             }
         }
     };

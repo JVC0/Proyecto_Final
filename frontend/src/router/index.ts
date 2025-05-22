@@ -9,6 +9,7 @@ import GroupPage from "@/views/GroupPage.vue"
 import GroupDetail from "@/views/GroupDetail.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import AddGroup from "@/views/AddGroup.vue"
+import EditProfile from "@/views/EditProfile.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -41,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
         component: ProfilePage,
     },
     {
+        path: "/Profile/:username/edit",
+        name: "EditProfilePage",
+        component: EditProfile,
+    },
+    {
         path: "/Profile/:username/groups/",
         name: "GroupPage",
         component: GroupPage,
@@ -51,7 +57,7 @@ const routes: Array<RouteRecordRaw> = [
         component: GroupDetail,
     },
     {
-    path: "/Cart/payment",
+        path: "/Cart/payment",
         name: "PaymentPage",
         component: PaymentPage,
     },
