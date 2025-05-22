@@ -3,7 +3,6 @@
 		<h2>Edit Profile</h2>
 
 		<form @submit.prevent="handleSubmit">
-			<!-- User Fields -->
 			<div class="form-group">
 				<label>First Name</label>
 				<input type="text" v-model="form.user.first_name" />
@@ -16,7 +15,6 @@
 				<p v-if="errors.user_last_name" class="error">{{ errors.user_last_name }}</p>
 			</div>
 
-			<!-- Profile Fields -->
 			<div class="form-group">
 				<label>Profile Picture</label>
 				<input type="file" @change="handleFileChange" accept="image/*" />
