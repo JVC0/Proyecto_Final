@@ -49,9 +49,6 @@
 							+
 						</button>
 					</div>
-					<div v-if="message[product.id]" class="alert" :class="messageType[product.id]">
-						{{ message[product.id] }}
-					</div>
 				</div>
 			</div>
 		</div>
@@ -62,6 +59,7 @@
 import { defineComponent } from "vue";
 import api from "@/utils/api";
 import { Product } from "@/types/product";
+import { useMessageStore } from "@/stores/message";
 
 export default defineComponent({
 	name: "ProductPage",
@@ -70,29 +68,24 @@ export default defineComponent({
 			products: [] as Product[],
 			quantities: {} as Record<number, number>,
 			loading: {} as Record<number, boolean>,
-			message: {} as Record<number, string>,
-			messageType: {} as Record<number, string>,
 		};
+	},
+	setup() {
+		const messageStore = useMessageStore();
+		return { messageStore };
 	},
 	mounted() {
 		this.getProducts();
 	},
 	methods: {
 		getProducts() {
-			api
-				.get("/api/products/")
-				.then((response) => {
-					this.products = response.data;
-					this.products.forEach((product) => {
-						this.quantities[product.id] = Math.min(1, product.stock);
-						this.loading[product.id] = false;
-						this.message[product.id] = "";
-						this.messageType[product.id] = "";
-					});
-				})
-				.catch((error) => {
-					console.log(error);
+			api.get("/api/products/").then((response) => {
+				this.products = response.data;
+				this.products.forEach((product) => {
+					this.quantities[product.id] = Math.min(1, product.stock);
+					this.loading[product.id] = false;
 				});
+			});
 		},
 		incrementQuantity(product: Product) {
 			if (this.quantities[product.id] < product.stock) {
@@ -115,12 +108,10 @@ export default defineComponent({
 			if (!product || product.stock === 0) return;
 
 			this.loading[product.id] = true;
-			this.message[product.id] = "";
-			this.messageType[product.id] = "";
 
 			try {
 				const csrfToken = this.getCsrfToken();
-				await api.post(
+				const response = await api.post(
 					`/api/cart/add/${product.id}/`,
 					{ quantity: this.quantities[product.id] },
 					{
@@ -130,15 +121,19 @@ export default defineComponent({
 					}
 				);
 
-				this.message[product.id] = "Product added to cart successfully!";
-				this.messageType[product.id] = "alert-success";
-				setTimeout(() => {
-					this.message[product.id] = "";
-				}, 3000);
-			} catch (error) {
-				console.error("Error adding to cart:", error);
-				this.message[product.id] = "Failed to add product to cart";
-				this.messageType[product.id] = "alert-danger";
+				if (response.data.success) {
+					this.messageStore.setMessage(
+						response.data.message || "Product added to cart successfully!"
+					);
+				} else if (response.data.message) {
+					this.messageStore.setMessage(response.data.message);
+				}
+			} catch (error: any) {
+				if (error.response?.data?.message) {
+					this.messageStore.setMessage(error.response.data.message, true);
+				} else {
+					this.messageStore.setMessage("Failed to add product to cart");
+				}
 			} finally {
 				this.loading[product.id] = false;
 			}
@@ -164,12 +159,6 @@ export default defineComponent({
 
 .badge {
 	background-color: rgb(166, 3, 184);
-}
-
-.alert {
-	padding: 0.5rem 1rem;
-	font-size: 0.9rem;
-	margin-top: 0.5rem;
 }
 
 .quantity-display {
