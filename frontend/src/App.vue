@@ -1,8 +1,9 @@
 <template>
-	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+	<nav class="navbar navbar-expand-lg custom_navbar">
+		<img src="../public/shoblyn.png" class="shoblyn_logo" alt="logo">
 		<div class="container-fluid">
 			<router-link to="/" class="navbar-brand active">
-				<strong>Home</strong>
+				<strong>Home Shoblyn</strong>
 			</router-link>
 			<button
 				class="navbar-toggler"
@@ -18,14 +19,18 @@
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav ms-auto">
 					<li class="nav-item mt-2 me-2">
-						<router-link to="/Cart">
-							<i class="bi bi-cart4 custom-cart"></i>
-						</router-link>
+						<template v-if="isAuthenticated">
+							<router-link to="/Cart">
+								<i class="bi bi-cart4 custom-cart"></i>
+							</router-link>
+						</template>
 					</li>
 					<li class="nav-item mt-2 me-2">
-						<router-link :to="{ name: 'RecipeList' } ">
-							Ver Recetas
-						</router-link>
+						<template v-if="isAuthenticated">
+							<router-link :to="{ name: 'RecipeList' } ">
+								Ver Recetas
+							</router-link>
+						</template>
 					</li>
 					<li class="nav-item">
 						<template v-if="isAuthenticated">
@@ -115,4 +120,13 @@ const handleLogout = () => {
 	color: inherit;
 	font-size: 1.1rem;
 }
+
+.custom_navbar {
+	background-color: rgb(15, 67, 41);
+}
+
+.shoblyn_logo{
+	height: 75px;
+}
+
 </style>

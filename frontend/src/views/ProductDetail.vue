@@ -1,91 +1,132 @@
 <template>
-	<div v-if="product">
-		<section class="py-5">
-			<div
-				class="container bg-light rounded-4 mt-4 position-absolute top-50 start-50 translate-middle"
-			>
-				<div class="row gx-5">
-					<aside class="col-lg-6 p-0">
-						<img :src="product.image" :alt="product.name" class="img-fluid" />
-					</aside>
-					<main class="col-lg-6">
-						<div class="ps-lg-3">
-							<h4 class="title text-dark mt-4">
-								{{ product.name }}
-							</h4>
-							<div class="d-flex flex-row my-3">
-								<span :class="product.stock > 0 ? 'text-success' : 'text-danger'">
-									{{ product.stock > 0 ? `In stock (${product.stock} available)` : "Out of stock" }}
-								</span>
-							</div>
-							<div class="mb-3">
-								<span class="h5">${{ product.price }}</span>
-								<span class="text-muted">/per item</span>
-							</div>
-							<p>
-								{{ product.description }}
-							</p>
-							<hr />
-							<div class="row mb-4" v-if="product.stock > 0">
-								<div class="col-md-4 col-6 mb-3">
-									<label for="quantity-input" class="mb-2 d-block">Quantity</label>
-									<div class="input-group mb-3" style="width: 170px">
-										<button
-											class="btn btn-light border border-secondary px-3"
-											type="button"
-											@click="decrementQuantity"
-											data-mdb-ripple-color="dark"
-											:disabled="quantity <= 1"
-										>
-											<i class="bi bi-dash"></i>
-										</button>
-										<span class="form-control text-center border border-secondary quantity-display">
-											{{ quantity }}
-										</span>
-										<button
-											class="btn btn-light border border-secondary px-3"
-											type="button"
-											@click="incrementQuantity"
-											data-mdb-ripple-color="dark"
-											:disabled="quantity >= product.stock"
-										>
-											<i class="bi bi-plus"></i>
-										</button>
-									</div>
-								</div>
-							</div>
-							<button
-								@click="addToCart"
-								class="btn btn-primary shadow-0"
-								:disabled="loading || product.stock === 0 || quantity > product.stock"
-							>
-								<template v-if="!loading">
-									<i class="me-1 fa fa-shopping-basket"></i> Add to cart
-								</template>
-								<template v-else>
-									<span
-										class="spinner-border spinner-border-sm"
-										role="status"
-										aria-hidden="true"
-									></span>
-									Adding...
-								</template>
-							</button>
-							<div v-if="message" class="alert mt-3" :class="messageType">
-								{{ message }}
-							</div>
-						</div>
-					</main>
-				</div>
-			</div>
-		</section>
-	</div>
+  <div v-if="product">
+    <section class="py-5" role="region" aria-labelledby="productTitle">
+      <div class="container bg-light rounded-4 mt-4 position-absolute top-50 start-50 translate-middle">
+        <div class="row gx-5">
+          <aside class="col-lg-6 p-0" role="complementary">
+            <img 
+              :src="product.image" 
+              :alt="product.name" 
+              class="img-fluid custom_image"
+              role="img"
+              aria-describedby="imageDesc"
+            >
+            <span id="imageDesc" class="visually-hidden">Main product image</span>
+          </aside>
+          
+          <main class="col-lg-6" role="main">
+            <div class="ps-lg-3">
+              <h1 id="productTitle" class="title text-dark mt-4 h2">
+                {{ product.name }}
+              </h1>
+              
+              <div class="d-flex flex-row my-3">
+                <span 
+                  :class="product.stock > 0 ? 'text-success' : 'text-danger'"
+                  role="status"
+                  aria-live="polite"
+                  :aria-label="product.stock > 0 ? 'En stock' : 'Agotado'"
+                >
+                  {{ product.stock > 0 ? `Disponible (${product.stock} unidades)` : "Sin stock" }}
+                </span>
+              </div>
 
-	<div v-else class="text-center py-5">
-		<div class="spinner-border" role="status">
-			<span class="visually-hidden">Loading...</span>
-		</div>
-	</div>
+              <div class="mb-3" aria-label="Precio del producto">
+                <span class="h5">${{ product.price }}</span>
+                <span class="text-muted">/unidad</span>
+              </div>
+              
+              <p aria-label="Descripción del producto">
+                {{ product.description }}
+              </p>
+              
+              <hr role="separator">
+              
+              <div class="row mb-4" v-if="product.stock > 0">
+                <div class="col-md-4 col-6 mb-3">
+                  <label for="quantity-input" class="mb-2 d-block">Cantidad</label>
+                  <div 
+                    class="input-group mb-3" 
+                    style="width: 170px"
+                    role="group"
+                    aria-label="Selector de cantidad"
+                  >
+                    <button
+                      class="btn btn-light border border-secondary px-3"
+                      type="button"
+                      @click="decrementQuantity"
+                      :disabled="quantity <= 1"
+                      aria-label="Reducir cantidad"
+                    >
+                      <i class="bi bi-dash" aria-hidden="true"></i>
+                    </button>
+                    <span 
+                      id="quantity-input"
+                      class="form-control text-center border border-secondary quantity-display"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {{ quantity }}
+                    </span>
+                    <button
+                      class="btn btn-light border border-secondary px-3"
+                      type="button"
+                      @click="incrementQuantity"
+                      :disabled="quantity >= product.stock"
+                      aria-label="Aumentar cantidad"
+                    >
+                      <i class="bi bi-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                @click="addToCart"
+                class="btn btn-primary shadow-0"
+                :disabled="loading || product.stock === 0 || quantity > product.stock"
+                aria-label="Añadir al carrito"
+                :aria-busy="loading"
+              >
+                <template v-if="!loading">
+                  <i class="me-1 fa fa-shopping-basket" aria-hidden="true"></i> Añadir al carrito
+                </template>
+                <template v-else>
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="visually-hidden">Cargando...</span>
+                </template>
+              </button>
+
+              <div 
+                v-if="message" 
+                class="alert mt-3" 
+                :class="messageType"
+                role="alert"
+                aria-live="assertive"
+              >
+                {{ message }}
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div 
+    v-else 
+    class="text-center py-5"
+    role="alert"
+    aria-live="polite"
+  >
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando producto...</span>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">

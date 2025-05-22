@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import api from "@/utils/api";
 import { useMessageStore } from "@/stores/message";
@@ -26,17 +25,14 @@ import { ProductGroup } from "@/types/productgroup";
 export default defineComponent({
 	name: "AddRecipe",
 	setup() {
-		const route = useRoute();
-		const router = useRouter();
 		const messageStore = useMessageStore();
 		const authStore = useAuthStore()
-        
+
 		const name = ref("");
 		const description = ref("");
 		const productGroupId = ref<number | null>(null);
 		const productGroups = ref<ProductGroup[] | null>(null);
 
-		// Obtener grupos de productos
 		onMounted(async () => {
 			try {
 				const username = authStore.user?.username;
@@ -59,7 +55,7 @@ export default defineComponent({
 					{
 						name: name.value,
 						description: description.value,
-						product_group: productGroupId.value, // Asegurar que el nombre del campo coincide con tu API
+						product_group: productGroupId.value,
 					},
 					{
 						headers: {
