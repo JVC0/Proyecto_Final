@@ -2,21 +2,59 @@
 	<div class="container py-3">
 		<div class="row">
 			<div class="col-12 col-sm-8 col-md-6 mx-auto">
-				<div id="pay-invoice" class="card">
+				<div
+					id="pay-invoice"
+					class="card payment-card"
+					role="region"
+					aria-labelledby="payment-heading"
+				>
 					<div class="card-body">
 						<div class="card-title">
-							<h2 class="text-center">Pay Invoice</h2>
+							<h2 id="payment-heading" class="text-center">Pay Invoice</h2>
 						</div>
 						<hr />
-						<form @submit.prevent="handlePayment" method="post">
-							<input type="hidden" id="x_first_name" required name="x_first_name" value="" />
-							<input type="hidden" id="x_last_name" required name="x_last_name" value="" />
-							<input type="hidden" id="x_card_num" required name="x_card_num" value="" />
-							<input type="hidden" id="x_exp_date" required name="x_exp_date" value="" />
+						<form
+							@submit.prevent="handlePayment"
+							method="post"
+							role="form"
+							aria-label="Payment form"
+						>
+							<input
+								type="hidden"
+								id="x_first_name"
+								required
+								name="x_first_name"
+								value=""
+								aria-hidden="true"
+							/>
+							<input
+								type="hidden"
+								id="x_last_name"
+								required
+								name="x_last_name"
+								value=""
+								aria-hidden="true"
+							/>
+							<input
+								type="hidden"
+								id="x_card_num"
+								required
+								name="x_card_num"
+								value=""
+								aria-hidden="true"
+							/>
+							<input
+								type="hidden"
+								id="x_exp_date"
+								required
+								name="x_exp_date"
+								value=""
+								aria-hidden="true"
+							/>
 
 							<div class="form-group">
-								<label>Payment amount</label>
-								<h2>${{ total.toFixed(2) }}</h2>
+								<label class="font-weight-bold">Payment amount</label>
+								<h2 aria-live="polite">${{ total.toFixed(2) }}</h2>
 							</div>
 
 							<div class="form-group">
@@ -30,7 +68,13 @@
 									autocomplete="cc-name"
 									v-model="nameOnCard"
 									required
+									aria-required="true"
+									aria-invalid="errors.nameOnCard ? 'true' : 'false'"
+									aria-describedby="cc-name-help"
 								/>
+								<small id="cc-name-help" class="form-text text-muted sr-only"
+									>Enter the name as it appears on your card</small
+								>
 							</div>
 
 							<div class="form-group">
@@ -45,8 +89,14 @@
 									v-model="cardNumber"
 									@input="formatCardNumber"
 									required
+									aria-required="true"
+									aria-invalid="errors.cardNumber ? 'true' : 'false'"
+									aria-describedby="cc-number-help"
 								/>
-								<div v-if="errors.cardNumber" class="invalid-feedback">
+								<small id="cc-number-help" class="form-text text-muted sr-only"
+									>Enter your 16-digit card number without spaces</small
+								>
+								<div v-if="errors.cardNumber" class="invalid-feedback" role="alert">
 									{{ errors.cardNumber }}
 								</div>
 							</div>
@@ -66,8 +116,14 @@
 											v-model="cardExpiry"
 											@input="formatExpiry"
 											required
+											aria-required="true"
+											aria-invalid="errors.cardExpiry ? 'true' : 'false'"
+											aria-describedby="cc-exp-help"
 										/>
-										<div v-if="errors.cardExpiry" class="invalid-feedback">
+										<small id="cc-exp-help" class="form-text text-muted sr-only"
+											>Enter expiration date in MM/YY format</small
+										>
+										<div v-if="errors.cardExpiry" class="invalid-feedback" role="alert">
 											{{ errors.cardExpiry }}
 										</div>
 									</div>
@@ -86,21 +142,13 @@
 											@input="limitCvcLength"
 											maxlength="3"
 											required
+											aria-required="true"
+											aria-invalid="errors.cardCvc ? 'true' : 'false'"
+											aria-describedby="cvc-help"
 										/>
-										<div class="input-group-addon">
-											<span
-												class="fa fa-question-circle fa-lg"
-												data-toggle="popover"
-												data-container="body"
-												data-html="true"
-												data-title="Security Code"
-												data-content="<div class='text-center one-card'>The 3 digit code on back of the card..<div class='visa-mc-cvc-preview'></div></div>"
-												data-trigger="hover"
-											></span>
-										</div>
-										<div v-if="errors.cardCvc" class="invalid-feedback">
-											{{ errors.cardCvc }}
-										</div>
+										<small id="cvc-help" class="form-text text-muted sr-only"
+											>3-digit code on the back of your card</small
+										>
 									</div>
 								</div>
 							</div>
@@ -110,11 +158,13 @@
 									type="submit"
 									class="btn btn-lg btn-success btn-block"
 									:disabled="isProcessing"
+									aria-busy="isProcessing ? 'true' : 'false'"
+									aria-live="polite"
 								>
-									<i class="fa fa-lock fa-lg"></i>&nbsp;
-									<span id="payment-button-amount" v-if="!isProcessing"
-										>Pay ${{ total.toFixed(2) }}</span
-									>
+									<i class="fa fa-lock fa-lg" aria-hidden="true"></i>&nbsp;
+									<span id="payment-button-amount" v-if="!isProcessing">
+										Pay ${{ total.toFixed(2) }}
+									</span>
 									<span id="payment-button-sending" v-else>
 										<span
 											class="spinner-border spinner-border-sm"
@@ -355,5 +405,8 @@ export default defineComponent({
 .alert-danger {
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+.payment-card {
+	width: 500px;
 }
 </style>

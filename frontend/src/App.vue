@@ -1,6 +1,6 @@
 <template>
 	<nav class="navbar navbar-expand-lg custom_navbar">
-		<img src="../public/shoblyn.png" class="shoblyn_logo" alt="logo">
+		<img src="../public/shoblyn.png" class="shoblyn_logo" alt="logo" />
 		<div class="container-fluid">
 			<router-link to="/" class="navbar-brand active">
 				<strong>Home Shoblyn</strong>
@@ -27,9 +27,7 @@
 					</li>
 					<li class="nav-item mt-2 me-2">
 						<template v-if="isAuthenticated">
-							<router-link :to="{ name: 'RecipeList' } ">
-								Ver Recetas
-							</router-link>
+							<router-link :to="{ name: 'RecipeList' }"> View Recipes </router-link>
 						</template>
 					</li>
 					<li class="nav-item">
@@ -125,8 +123,7 @@ const handleLogout = () => {
 	background-color: rgb(15, 67, 41);
 }
 
-.shoblyn_logo{
+.shoblyn_logo {
 	height: 75px;
 }
-
 </style>
