@@ -124,8 +124,11 @@ const handleLogin = async () => {
 }
 
 body {
-	background-image: url("https://wallpapercat.com/w/full/8/b/6/854961-1920x1080-desktop-full-hd-kfc-wallpaper-image.jpg");
+	background: linear-gradient(#248a57, #89EA5D);
+	width: 100%;
+	height: 2000px;
 	background-size: cover;
+	background-repeat: no-repeat;
 }
 
 .background {

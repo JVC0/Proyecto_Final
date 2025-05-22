@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+	<nav class="navbar navbar-expand-lg custom_navbar">
 		<div class="container-fluid">
 			<router-link to="/" class="navbar-brand active">
 				<strong>Home</strong>
@@ -115,4 +115,9 @@ const handleLogout = () => {
 	color: inherit;
 	font-size: 1.1rem;
 }
+
+.custom_navbar {
+	background-color: rgb(15, 67, 41);
+}
+
 </style>
