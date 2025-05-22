@@ -1,111 +1,85 @@
 <template>
-  <div class="groups_content" role="main" aria-labelledby="formHeading">
-    <form @submit.prevent="addGroupHandler" role="form" aria-label="Group creation form">
-      <h2 id="formHeading">Add a Group</h2>
-      
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input 
-          id="name" 
-          type="text"
-          placeholder="Name" 
-          required 
-          v-model="name"
-          aria-required="true"
-          aria-describedby="nameDescription"
-        >
-        <span id="nameDescription" class="visually-hidden">Enter group name</span>
-      </div>
+	<div class="groups_content" role="main" aria-labelledby="formHeading">
+		<form @submit.prevent="addGroupHandler" role="form" aria-label="Group creation form">
+			<h2 id="formHeading">Add a Group</h2>
 
-      <div 
-        class="products-container" 
-        role="list" 
-        aria-label="List of available products"
-      >
-        <div 
-          v-for="product in products" 
-          :key="product.id" 
-          class="product-card"
-          role="listitem"
-          :aria-labelledby="`product-${product.id}-title`"
-        >
-          <div class="card" style="width: 18rem">
-            <figure class="image">
-              <img 
-                :src="product.image" 
-                class="card-img-top custom_img" 
-                :alt="product.name"
-                role="img"
-                aria-hidden="true"
-              >
-            </figure>
-            <div class="card-body">
-              <h5 
-                class="card-title"
-                :id="`product-${product.id}-title`"
-              >
-                <router-link 
-                  :to="{ name: 'ProductDetail', params: { slug: product.slug } }"
-                  :aria-label="`View details for ${product.name}`"
-                >
-                  {{ product.name }}
-                </router-link>
-              </h5>
-              
-              <span 
-                class="badge rounded-pill" 
-                :aria-label="`Category: ${product.category.name}`"
-              >
-                {{ product.category.name }}
-              </span>
-              
-              <p 
-                class="product_price" 
-                aria-label="Price"
-                :aria-valuetext="`$${product.price}`"
-              >
-                ${{ product.price }}
-              </p>
-              
-              <div class="form-check">
-                <input
-                  class="checkbox"
-                  type="checkbox"
-                  :id="`product-${product.id}-checkbox`"
-                  v-model="selectedProducts"
-                  :value="product.id"
-                  :aria-label="`Select ${product.name} for group`"
-                >
-                <label 
-                  :for="`product-${product.id}-checkbox`"
-                  class="visually-hidden"
-                >
-                  Select {{ product.name }}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input
+					id="name"
+					type="text"
+					placeholder="Name"
+					required
+					v-model="name"
+					aria-required="true"
+					aria-describedby="nameDescription"
+				/>
+				<span id="nameDescription" class="visually-hidden">Enter group name</span>
+			</div>
 
-      <button 
-        type="submit" 
-        class="button-submit"
-        aria-label="Create new group"
-      >
-        Create Group
-      </button>
-    </form>
+			<div class="products-container" role="list" aria-label="List of available products">
+				<div
+					v-for="product in products"
+					:key="product.id"
+					class="product-card"
+					role="listitem"
+					:aria-labelledby="`product-${product.id}-title`"
+				>
+					<div class="card" style="width: 18rem">
+						<figure class="image">
+							<img
+								:src="product.image"
+								class="card-img-top custom_img"
+								:alt="product.name"
+								role="img"
+								aria-hidden="true"
+							/>
+						</figure>
+						<div class="card-body">
+							<h5 class="card-title" :id="`product-${product.id}-title`">
+								<router-link
+									:to="{ name: 'ProductDetail', params: { slug: product.slug } }"
+									:aria-label="`View details for ${product.name}`"
+								>
+									{{ product.name }}
+								</router-link>
+							</h5>
 
-    <p 
-      v-if="error" 
-      class="error"
-      role="alert"
-      aria-live="assertive"
-    >
-      {{ error }}
-    </p>
-  </div>
+							<span class="badge rounded-pill" :aria-label="`Category: ${product.category.name}`">
+								{{ product.category.name }}
+							</span>
+
+							<p class="product_price" aria-label="Price" :aria-valuetext="`$${product.price}`">
+								${{ product.price }}
+							</p>
+
+							<div class="form-check">
+								<input
+									class="checkbox"
+									type="checkbox"
+									:id="`product-${product.id}-checkbox`"
+									v-model="selectedProducts"
+									:value="product.id"
+									:aria-label="`Select ${product.name} for group`"
+								/>
+								<label :for="`product-${product.id}-checkbox`" class="visually-hidden">
+									Select {{ product.name }}
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<button type="submit" class="button-submit" aria-label="Create new group">
+				Create Group
+			</button>
+		</form>
+
+		<p v-if="error" class="error" role="alert" aria-live="assertive">
+			{{ error }}
+		</p>
+	</div>
 </template>
 
 <script lang="ts">
@@ -348,5 +322,4 @@ input[type="number"]::-webkit-outer-spin-button {
 	width: 25px;
 	height: 25px;
 }
-
 </style>

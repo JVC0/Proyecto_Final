@@ -1,65 +1,55 @@
 <template>
-  <nav aria-label="Group management actions">
-    <router-link 
-      class="btn btn-primary add_button"
-      role="button"
-      aria-label="Create new group"
-      :to="{name: 'AddGroup', params: { username: route.params.username }}">
-      Crear un Grupo
-    </router-link>
-  </nav>
+	<nav aria-label="Group management actions">
+		<router-link
+			class="btn btn-primary add_button"
+			role="button"
+			aria-label="Create new group"
+			:to="{ name: 'AddGroup', params: { username: route.params.username } }"
+		>
+			Crear un Grupo
+		</router-link>
+	</nav>
 
-  <div 
-    class="groups_content"
-    role="region" 
-    aria-label="List of user groups"
-  >
-    <div 
-      v-for="productGroup in productGroups" 
-      :key="productGroup.id"
-      role="article"
-      aria-labelledby="`group-${productGroup.id}-title`"
-      class="group-card"
-    >
-      <div class="card" style="width: 18rem">
-        <div class="card-body">
-          <h5 
-            :id="`group-${productGroup.id}-title`" 
-            class="card-title"
-            tabindex="0"
-          >
-            {{ productGroup.name }}
-          </h5>
-          
-          <div 
-            role="list"
-            aria-label="Group products"
-          >
-            <div 
-              v-for="product in productGroup.products" 
-              :key="product.id"
-              role="listitem"
-              :aria-label="product.name"
-            >
-              {{ product.name }}
-            </div>
-          </div>
+	<div class="groups_content" role="region" aria-label="List of user groups">
+		<div
+			v-for="productGroup in productGroups"
+			:key="productGroup.id"
+			role="article"
+			aria-labelledby="`group-${productGroup.id}-title`"
+			class="group-card"
+		>
+			<div class="card" style="width: 18rem">
+				<div class="card-body">
+					<h5 :id="`group-${productGroup.id}-title`" class="card-title" tabindex="0">
+						{{ productGroup.name }}
+					</h5>
 
-          <router-link
-            class="btn btn-primary"
-            role="button"
-            :aria-label="`View details for group: ${productGroup.name}`"
-            :to="{
-              name: 'GroupDetail',
-              params: { username: route.params.username, id: productGroup.id },
-            }"
-          >
-            Ver Grupo
-          </router-link>
-        </div>
-      </div>
-    </div>
-  </div>
+					<div role="list" aria-label="Group products">
+						<div
+							v-for="product in productGroup.products"
+							:key="product.id"
+							role="listitem"
+							:aria-label="product.name"
+						>
+							{{ product.name }}
+						</div>
+					</div>
+
+					<router-link
+						class="btn btn-primary"
+						role="button"
+						:aria-label="`View details for group: ${productGroup.name}`"
+						:to="{
+							name: 'GroupDetail',
+							params: { username: route.params.username, id: productGroup.id },
+						}"
+					>
+						Ver Grupo
+					</router-link>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script lang="ts">

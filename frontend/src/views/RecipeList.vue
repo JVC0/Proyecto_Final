@@ -1,15 +1,18 @@
 <template>
-	<router-link class="btn btn-primary add_button" :to="{name: 'AddRecipe', params: { username: route.params.username },}">
-		Crear un Grupo
+	<router-link
+		class="btn btn-primary add_button"
+		:to="{ name: 'AddRecipe', params: { username: route.params.username } }"
+	>
+		Add a Recipe
 	</router-link>
-        <div class="recipes_container">
-            <div v-for="recipe in recipes" :key="recipe.id" class="product-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            {{ recipe.name }}
-                        </h5>
-                        <router-link
+	<div class="recipes_container">
+		<div v-for="recipe in recipes" :key="recipe.id" class="product-card">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">
+						{{ recipe.name }}
+					</h5>
+					<router-link
 						class="btn btn-primary"
 						:to="{
 							name: 'RecipeDetail',
@@ -18,10 +21,10 @@
 					>
 						Ver Receta</router-link
 					>
-                    </div>
-                </div>
-            </div>
-        </div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script lang="ts">

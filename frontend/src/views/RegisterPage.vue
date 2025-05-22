@@ -101,6 +101,7 @@ export default {
 					router.push("/login");
 				} else if (response.data.message) {
 					messageStore.setMessage(response.data.message);
+					router.push("/login");
 				}
 			} catch (error: any) {
 				if (error.response?.data?.message) {
