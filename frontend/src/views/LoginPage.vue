@@ -126,9 +126,11 @@ const handleLogin = async () => {
 body {
 	background: linear-gradient(#248a57, #89EA5D);
 	width: 100%;
-	height: 2000px;
 	background-size: cover;
 	background-repeat: no-repeat;
+	margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
 }
 
 .background {

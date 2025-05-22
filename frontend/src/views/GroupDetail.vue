@@ -6,7 +6,7 @@
 				<div v-for="product in groupDetail.products" :key="product.id" class="product-card">
 					<div class="card">
 						<figure class="image">
-							<img :src="product.image" class="card-img-top" :alt="product.name" />
+							<img :src="product.image" class="card-img-top custom_img" :alt="product.name" />
 						</figure>
 						<div class="card-body">
 							<h5 class="card-title">
@@ -110,4 +110,9 @@ export default defineComponent({
 .product-card {
 	margin-bottom: 20px;
 }
+
+.custom_img {
+	height: 200px;
+}
+
 </style>
