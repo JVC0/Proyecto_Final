@@ -22,6 +22,11 @@
 							<i class="bi bi-cart4 custom-cart"></i>
 						</router-link>
 					</li>
+					<li class="nav-item mt-2 me-2">
+						<router-link :to="{ name: 'RecipeList' } ">
+							Ver Recetas
+						</router-link>
+					</li>
 					<li class="nav-item">
 						<template v-if="isAuthenticated">
 							<div class="d-inline-flex align-items-center">

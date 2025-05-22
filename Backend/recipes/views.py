@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from .decorators import object_exists
 from .models import Recipe
 from .serializers import RecipeSerializer
-
+from products.models import ProductGroup
 
 def recipe_list(request):
     recipes = Recipe.objects.all()
@@ -13,9 +13,9 @@ def recipe_list(request):
     return serializer.json_response()
 
 
-@object_exists(Recipe, "recipe_slug")
-def recipe_detail(request, recipe_slug):
-    recipes = Recipe.objects.get(slug=recipe_slug)
+@object_exists(Recipe, "pk")
+def recipe_detail(request, pk):
+    recipes = Recipe.objects.get(id=pk)
     serializer = RecipeSerializer(recipes, request=request)
     return serializer.json_response()
 
@@ -24,7 +24,9 @@ def add_recipe(request):
     data = json.loads(request.body)
     description = data.get("description")
     name = data.get("name")
-    product_group = data.get("product_group")
+    product_groupID = data.get("product_group")
+
+    product_group = ProductGroup.objects.get(id=product_groupID)
     user = request.user
     recipe = Recipe.objects.create(
         name=name, description=description, product_group=product_group, user=user
