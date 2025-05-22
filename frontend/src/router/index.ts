@@ -9,6 +9,8 @@ import GroupPage from "@/views/GroupPage.vue"
 import GroupDetail from "@/views/GroupDetail.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import AddGroup from "@/views/AddGroup.vue"
+import RecipeList from "@/views/RecipeList.vue";
+import RecipeDetail from "@/views/RecipeDetail.vue";
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -59,6 +61,16 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Profile/:username/groups/add",
         name: "AddGroup",
         component: AddGroup,
+    },
+    {
+        path: "/Recipes/",
+        name: "RecipeList",
+        component: RecipeList,
+    },
+    {
+        path: "/Recipes/:id",
+        name: "RecipeDetail",
+        component: RecipeDetail,
     },
 ];
 

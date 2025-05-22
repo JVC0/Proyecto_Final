@@ -1,4 +1,7 @@
 <template>
+	<router-link class="btn btn-primary add_button" :to="{name: 'AddGroup',	params: { username: route.params.username },}">
+		Crear un Grupo
+	</router-link>
 	<div class="groups_content">
 		<div v-for="productGroup in productGroups" :key="productGroup.id">
 			<div class="card" style="width: 18rem">
@@ -62,7 +65,19 @@ export default defineComponent({
 <style scoped>
 .groups_content {
 	display: flex;
-	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding: 20px;
+	color: rgb(242, 242, 242);
+	margin-top: 40px;
+	margin-left: 100px;
+	margin-right: 100px;
+	background-color: rgba(162, 162, 162, 0.534);
+}
+
+.add_button {
+	margin-left: 700px;
+	margin-top: 25px;
 }
 
 .card {

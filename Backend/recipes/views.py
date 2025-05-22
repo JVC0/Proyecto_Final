@@ -13,9 +13,9 @@ def recipe_list(request):
     return serializer.json_response()
 
 
-@object_exists(Recipe, "recipe_slug")
-def recipe_detail(request, recipe_slug):
-    recipes = Recipe.objects.get(slug=recipe_slug)
+@object_exists(Recipe, "pk")
+def recipe_detail(request, pk):
+    recipes = Recipe.objects.get(id=pk)
     serializer = RecipeSerializer(recipes, request=request)
     return serializer.json_response()
 
