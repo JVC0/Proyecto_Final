@@ -18,7 +18,7 @@
             <h4>Productos:</h4>
             <div class="product_content">
                 <div v-for="product in recipe.product_group.products" :key="product.id">
-                    <div class="card">
+                    <div class="card product_card">
                         <figure class="product_image">
                         <img :src="product.image" class="card-img-top" :alt="product.name" />
                         </figure>
@@ -95,7 +95,7 @@ export default defineComponent({
     height: 150px;
 }
 
-.card {
+.product_card {
     width: 150px;
 }
 </style>

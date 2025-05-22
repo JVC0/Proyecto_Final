@@ -1,4 +1,7 @@
 <template>
+	<router-link class="btn btn-primary add_button" :to="{name: 'AddRecipe', params: { username: route.params.username },}">
+		Crear un Grupo
+	</router-link>
         <div class="recipes_container">
             <div v-for="recipe in recipes" :key="recipe.id" class="product-card">
                 <div class="card">
@@ -70,5 +73,10 @@ export default defineComponent({
 	flex-wrap: wrap;
 	margin-top: 40px;
 	margin-left: 40px;
+}
+
+.add_button {
+	margin-left: 700px;
+	margin-top: 25px;
 }
 </style>

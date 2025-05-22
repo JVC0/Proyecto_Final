@@ -11,6 +11,7 @@ import PaymentPage from "@/views/PaymentPage.vue";
 import AddGroup from "@/views/AddGroup.vue"
 import RecipeList from "@/views/RecipeList.vue";
 import RecipeDetail from "@/views/RecipeDetail.vue";
+import AddRecipe from "@/views/AddRecipe.vue"
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
@@ -71,6 +72,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Recipes/:id",
         name: "RecipeDetail",
         component: RecipeDetail,
+    },
+    {
+        path: "/Recipes/add",
+        name: "AddRecipe",
+        component: AddRecipe,
     },
 ];
 
