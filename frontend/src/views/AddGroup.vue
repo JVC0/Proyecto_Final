@@ -1,141 +1,133 @@
 <template>
-        <form @submit.prevent="addGroupHandler">
-                <h2>Add a Group</h2>
-                <label for="name">Name</label>
-                <input
-                        id="name"
-                        type="name"
-                        placeholder="Name"
-                        required
-                        v-model="name"
-                />
-                <div class="products-container">
-                <div v-for="product in products" :key="product.id" class="product-card">
-                        <div class="card" style="width: 18rem">
-                                <figure class="image">
-                                        <img
-                                                :src="product.image"
-                                                class="card-img-top"
-                                                :alt="product.name"
-                                        />
-                                </figure>
-                                <div class="card-body">
-                                        <h5 class="card-title">
-                                                <router-link :to="{ name: 'ProductDetail', params: { slug: product.slug }}">{{ product.name }}</router-link>
-                                        </h5>
-                                        <span class="badge rounded-pill ">{{product.category.name}}</span>
-                                        <p class="product_price">${{ product.price }}</p>
-                                        <label for="producto">Add to group</label>
-                                        <input type="checkbox" name="Añadir" id="producto"
-                                        v-model="selectedProducts" :value="product.id">
-                                </div>
-                        </div>
-                </div>
-        </div>
-                <button type="submit" id="submit" class="button-submit">
-                        Create Group
-                </button>
-        </form>
-        <p v-if="error" class="error">{{ error }}</p>
+	<form @submit.prevent="addGroupHandler">
+		<h2>Add a Group</h2>
+		<label for="name">Name</label>
+		<input id="name" type="name" placeholder="Name" required v-model="name" />
+		<div class="products-container">
+			<div v-for="product in products" :key="product.id" class="product-card">
+				<div class="card" style="width: 18rem">
+					<figure class="image">
+						<img :src="product.image" class="card-img-top" :alt="product.name" />
+					</figure>
+					<div class="card-body">
+						<h5 class="card-title">
+							<router-link :to="{ name: 'ProductDetail', params: { slug: product.slug } }">{{
+								product.name
+							}}</router-link>
+						</h5>
+						<span class="badge rounded-pill">{{ product.category.name }}</span>
+						<p class="product_price">${{ product.price }}</p>
+						<label for="producto">Add to group</label>
+						<input
+							type="checkbox"
+							name="Añadir"
+							id="producto"
+							v-model="selectedProducts"
+							:value="product.id"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<button type="submit" id="submit" class="button-submit">Create Group</button>
+	</form>
+	<p v-if="error" class="error">{{ error }}</p>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted} from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import api from "@/utils/api";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
 interface Product {
-        id: number;
-        image: string;
-        name: string;
-        slug: string;
-        price: number;
-        description: string;
-        category: Category;
+	id: number;
+	image: string;
+	name: string;
+	slug: string;
+	price: number;
+	description: string;
+	category: Category;
 }
 
 interface Category {
-        id: number;
-        name: string;
-        description: string;
+	id: number;
+	name: string;
+	description: string;
 }
 
 export default defineComponent({
-        name: "AddGroup",
-        setup() {
-                const name = ref("");
-                const selectedProducts = ref<number[]>([]);
-                const error = ref("");
-                const router = useRouter();
-                const products = ref<Product[]>([]);
+	name: "AddGroup",
+	setup() {
+		const name = ref("");
+		const selectedProducts = ref<number[]>([]);
+		const error = ref("");
+		const router = useRouter();
+		const products = ref<Product[]>([]);
 
-        onMounted(async () => {
-                try {
-                        const response = await api.get("/api/products/");
-                        products.value = response.data;
-                        const saved = localStorage.getItem("selectedProducts");
-                if (saved) {
-                        selectedProducts.value = JSON.parse(saved);
-                }
-                } catch (err) {
-                        console.error("Error cargando productos:", err);
-                }
-        });
+		onMounted(async () => {
+			try {
+				const response = await api.get("/api/products/");
+				products.value = response.data;
+				const saved = localStorage.getItem("selectedProducts");
+				if (saved) {
+					selectedProducts.value = JSON.parse(saved);
+				}
+			} catch (err) {
+				console.error("Error cargando productos:", err);
+			}
+		});
 
-        const addGroupHandler = async () => {
-                try {
-                        const csrfToken = document.cookie
-                                .split("; ")
-                                .find((row) => row.startsWith("csrftoken="))
-                                ?.split("=")[1];
+		const addGroupHandler = async () => {
+			try {
+				const csrfToken = document.cookie
+					.split("; ")
+					.find((row) => row.startsWith("csrftoken="))
+					?.split("=")[1];
 
-                        if (!csrfToken) {
-                                throw new Error("CSRF token not found.");
-                }
+				if (!csrfToken) {
+					throw new Error("CSRF token not found.");
+				}
 
-                localStorage.setItem(
-                        "selectedProducts",
-                        JSON.stringify(selectedProducts.value)
-                );
+				localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts.value));
 
-                await api.post(
-                        "/api/profile/groups/add/",
-                        {
-                                name: name.value,
-                                products: selectedProducts.value,
-                        },
-                        {
-                                headers: {
-                                        "X-CSRFToken": csrfToken,
-                                },
-                        }
-                );
+				await api.post(
+					"/api/profile/groups/add/",
+					{
+						name: name.value,
+						products: selectedProducts.value,
+					},
+					{
+						headers: {
+							"X-CSRFToken": csrfToken,
+						},
+					}
+				);
 
-                localStorage.removeItem("selectedProducts");
-                selectedProducts.value = [];
-                name.value = "";
-
-        } catch (err) {
-                if (axios.isAxiosError(err)) {
-                        error.value =
-                        err.response?.data?.error ||
-                        "Error creando el grupo. Inténtalo de nuevo.";
-                } else {
-                        error.value = "Error inesperado.";
-                }
-        }
-        };
-        return {
-                name,
-                selectedProducts,
-                error,
-                products,
-                addGroupHandler,
-        };
-        },
+				localStorage.removeItem("selectedProducts");
+				selectedProducts.value = [];
+				name.value = "";
+				router.push({
+					name: "GroupPage",
+					params: { username: router.currentRoute.value.params.username },
+				});
+			} catch (err) {
+				if (axios.isAxiosError(err)) {
+					error.value = err.response?.data?.error || "Error creando el grupo. Inténtalo de nuevo.";
+				} else {
+					error.value = "Error inesperado.";
+				}
+			}
+		};
+		return {
+			name,
+			selectedProducts,
+			error,
+			products,
+			addGroupHandler,
+		};
+	},
 });
-
 </script>
 
 <style>
@@ -234,28 +226,28 @@ export default defineComponent({
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 .products-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding: 20px;
 }
 .product-card {
-        margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 .input-group {
-        width: 120px;
-        margin: 0 auto 15px;
+	width: 120px;
+	margin: 0 auto 15px;
 }
 
-.badge{
-        background-color: rgb(166, 3, 184);
+.badge {
+	background-color: rgb(166, 3, 184);
 }
 .product_price {
-        color: black
+	color: black;
 }
 </style>

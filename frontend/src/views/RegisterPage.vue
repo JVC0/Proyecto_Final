@@ -1,26 +1,63 @@
 <template>
 	<div class="background">
-		<div class="shape"></div>
-		<div class="shape"></div>
+		<div class="shape" aria-hidden="true"></div>
+		<div class="shape" aria-hidden="true"></div>
 	</div>
-	<form class="register" @submit.prevent="handleRegister">
-		<h2>CREATE ACCOUNT</h2>
-		<label for="email">Email</label>
-		<input id="email" type="email" placeholder="Email" required v-model="email" />
-		<label for="username">Username:</label>
-		<input v-model="username" type="text" placeholder="Username" id="username" required />
-		<label for="password">Password</label>
-		<input id="password" type="password" placeholder="Password" required v-model="password" />
+	<main class="container">
+		<form class="register" @submit.prevent="handleRegister">
+			<h2 class="register-title">CREATE ACCOUNT</h2>
+			<div class="form-group">
+				<label for="email" class="sr-only">Email</label>
+				<input
+					id="email"
+					type="email"
+					placeholder="Email"
+					required
+					v-model="email"
+					aria-required="true"
+					autocomplete="email"
+					class="form-input"
+				/>
+			</div>
+			<div class="form-group">
+				<label for="username" class="sr-only">Username</label>
+				<input
+					v-model="username"
+					type="text"
+					placeholder="Username"
+					id="username"
+					required
+					aria-required="true"
+					autocomplete="username"
+					class="form-input"
+				/>
+			</div>
 
-		<button type="submit" id="submit" class="button-submit">Create Account</button>
+			<div class="form-group">
+				<label for="password" class="sr-only">Password</label>
+				<input
+					id="password"
+					type="password"
+					placeholder="Password"
+					required
+					v-model="password"
+					aria-required="true"
+					autocomplete="new-password"
+					class="form-input"
+					aria-describedby="password-requirements"
+				/>
+			</div>
 
-		<div class="form">
-			<p>
-				Already have an account?
-				<router-link to="/login">Login here</router-link>.
-			</p>
-		</div>
-	</form>
+			<button type="submit" class="button-submit">Create Account</button>
+
+			<div class="login-redirect">
+				<p>
+					Already have an account?
+					<router-link to="/login" class="login-link">Login here</router-link>.
+				</p>
+			</div>
+		</form>
+	</main>
 </template>
 
 <script lang="ts">
@@ -69,7 +106,7 @@ export default {
 				if (error.response?.data?.message) {
 					messageStore.setMessage(error.response.data.message);
 				} else {
-					messageStore.setMessage("Registration failed. Please try again.");
+					messageStore.setMessage("Registration failed. Please try again.", true);
 				}
 			}
 		};

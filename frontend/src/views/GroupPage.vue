@@ -1,4 +1,10 @@
 <template>
+	<router-link
+		class="btn btn-primary add_button"
+		:to="{ name: 'AddGroup', params: { username: route.params.username } }"
+	>
+		Crear un Grupo
+	</router-link>
 	<div class="groups_content">
 		<div v-for="productGroup in productGroups" :key="productGroup.id">
 			<div class="card" style="width: 18rem">

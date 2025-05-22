@@ -8,7 +8,6 @@
 		</div>
 		<div v-else class="row">
 			<div class="col-lg-8">
-				<!-- Cart Items -->
 				<div class="card custom-card mb-4">
 					<div class="card-body">
 						<div v-for="(item, index) in cartItems" :key="item.id" class="row cart-item mb-3">
@@ -32,7 +31,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- Continue Shopping Button -->
 				<div class="text-start mb-4">
 					<router-link class="btn btn-primary" to="/">
 						<i class="bi bi-arrow-left me-2"></i>Continue Shopping
@@ -40,7 +38,6 @@
 				</div>
 			</div>
 			<div class="col-lg-4">
-				<!-- Cart Summary -->
 				<div class="card cart-summary">
 					<div class="card-body">
 						<h5 class="card-title mb-4">Order Summary</h5>
